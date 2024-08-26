@@ -15,10 +15,10 @@ app.set("view engine", "ejs");
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-
-app.use(cookieParser());
 app.use("/public", express.static(__dirname + "/static"));
 app.use('/uploads', express.static(__dirname + '/uploads'));
+
+
 
 dotenv.config({
   path: path.resolve(__dirname, ".env"),
@@ -30,18 +30,33 @@ dotenv.config({
   override: true,
 }); // load env file depending on NODE_ENV
 
-const port = process.env.PORT;
-const dbName = process.env.DATABASE_NAME;
-const dbPw = process.env.DATABASE_PW;
-
 app.use("/", router);
 
 // 404 처리
 app.get('*', (req, res) => {
   res.render('404')
 })
-app.listen(port, () => {
-              console.log('Database connected!');
-              console.log(`Server running in PORT: ${port}`);
-});
-    
+
+// Sequelize 연결 설정
+const sequelize = new Sequelize(
+    process.env.DB_NAME,
+    process.env.DB_USER,
+    process.env.DB_PASSWORD,
+    {
+        host: process.env.DB_HOST,
+        dialect: 'mysql',
+    }
+);
+
+
+sequelize
+    .sync({ force: false })
+    .then(() => {
+        app.listen(port, () => {
+            console.log('Database connected!');
+            console.log(`Server running in PORT: ${port}`);
+        });
+    })
+    .catch((err) => {
+        console.error(err)
+    });
