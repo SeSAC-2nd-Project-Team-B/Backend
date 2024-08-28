@@ -41,5 +41,8 @@ const CategoryModel = (sequelize, DataTypes) =>{
     return Category;
 }
 
+Category.associate = function (models) {
+    Category.belongsTo(models.Product,{foreignKey:"productId", sourceKey:"productId"});
+}
 module.exports=CategoryModel;
 
