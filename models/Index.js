@@ -27,7 +27,7 @@ const ProductImage = require('../models/product/ProductImageModel')(sequelize,Se
 const ProductHashtag = require('../models/product/ProductHashtagModel')(sequelize,Sequelize);
 const NewProduct = require('../models/product/NewProductModel')(sequelize,Sequelize);
 const Review = require('../models/product/ReviewModel')(sequelize,Sequelize);
-const Like = require('../models/product/LikeModel')(sequelize,Sequelize);
+const Likes = require('../models/product/LikesModel')(sequelize,Sequelize);
 const Report = require('../models/product/ReportModel')(sequelize,Sequelize);
 
 db.Active = Active;
@@ -43,7 +43,7 @@ db.ProductImage = ProductImage;
 db.ProductHashtag = ProductHashtag;
 db.NewProduct = NewProduct;
 db.Review = Review;
-db.Like = Like;
+db.Likes = Likes;
 db.Report = Report;
 
 // 모델 동기화

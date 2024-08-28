@@ -1,10 +1,10 @@
 // 좋아요 모델 정의
-const LikeModel = (sequelize, DataTypes) =>{
-    const Like = sequelize.define(
-        'Like', 
+const LikesModel = (sequelize, DataTypes) =>{
+    const Likes = sequelize.define(
+        'Likes', 
         { 
         // 좋아요 인덱스
-        likeId:{
+        LikesId:{
             type: DataTypes.BIGINT,
             primaryKey: true,
             autoIncrement: true,
@@ -24,7 +24,7 @@ const LikeModel = (sequelize, DataTypes) =>{
             onUpdate: 'CASCADE',
             onDelete: 'CASCADE'
         },
-        likeCount:{
+        LikesCount:{
             type:DataTypes.BIGINT,
             allowNull:false,
             defaultValue:0
@@ -35,13 +35,13 @@ const LikeModel = (sequelize, DataTypes) =>{
         timestamps : true, 
     }
 );
-Like.associate = function (models) {
-    Like.belongsTo(models.Product,{foreignKey:"productId", sourceKey:"productId"});
-    Like.belongsTo(models.User,{foreignKey:"userId", sourceKey:"userId"});
+Likes.associate = function (models) {
+    Likes.belongsTo(models.Product,{foreignKey:"productId", sourceKey:"productId"});
+    Likes.belongsTo(models.User,{foreignKey:"userId", sourceKey:"userId"});
 }
-    return Like;
+    return Likes;
 }
 
 
-module.exports=LikeModel;
+module.exports=LikesModel;
 
