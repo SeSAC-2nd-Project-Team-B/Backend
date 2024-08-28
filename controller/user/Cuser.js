@@ -3,13 +3,15 @@ const { User } = require('../../models/user/UserModel');
 const { Op } = require('sequelize');
 const encUtil = require("../../utils/encrypt");
 
-// 유저 생성
+// 유저 생성 // 회원가입
 exports.postUser = async(req, res) => {
     try {
         const { nickname, email, password, gender, age, profile_image, isAdmin } = req.body;
         
+        const hashedPassword = await encUtil.hashPw(password);
+
         const newUser = await User.create({
-            nickname, email, password, gender, age, profile_image, isAdmin
+            nickname, email, password: hashedPassword, gender, age, profile_image, isAdmin
         });
 
         res.status(201).json(newUser);
@@ -21,7 +23,7 @@ exports.postUser = async(req, res) => {
 }
 
 
-// 전체 유저 목록 조회 // 회원 검색 (전체 or 닉네임)
+// 전체 유저 목록 조회 // 회원검색 (전체 or 닉네임)
 exports.getUserList = async(req, res) => {
     try {
         const { nickname } = req.query;
@@ -37,7 +39,7 @@ exports.getUserList = async(req, res) => {
                 }
             });
 
-            // 정확히 일치하는 회원을 상단에 배치
+            // 정확히 일치하는 유저를 상단에 배치
             const exactMatches = users.filter(user => user.nickname === nickname);
             const partialMatches = users.filter(user => user.nickname !== nickname);
             users = [...exactMatches, ...partialMatches];
@@ -58,20 +60,38 @@ exports.getUserList = async(req, res) => {
 }
 
 
+// 특정 유저 한명 조회
+exports.getUser = async (req, res) => { 
+    const userId = req.userId;
+
+    try {
+        const user = await User.findOne({ where: { userId } });
+
+        if (!user) return res.status(404).json({ message: '회원을 찾을 수 없습니다.' });
+
+        return res.status(200).json(user);
+        
+    } catch (err) {
+        console.err(err.message);
+        res.status(500).json({ message: '서버 오류', err: err.message });
+    }
+}
+
+
 // 특정 유저 내용 수정 
 exports.patchUser = async(req, res) => {
     try {
         const { nickname, profile_image, currentPassword, password, age, gender } = req.body;
 
-        // 존재하는 회원인지 확인
+        // 존재하는 유저인지 확인
         const userId = req.userId;
         const user = await User.findOne({ where: { userId } });
         if (!user) return res.status(404).json({ message: '회원을 찾을 수 없습니다.' });
         
+        // 기존 비밀번호와 비교
         const isMatch = await encUtil.comparePw(currentPassword, user.password);
         if (!isMatch) return res.status(400).json({ message: '비밀번호가 일치하지 않습니다.' });
         
-
         // 비밀번호 변경
         const updateData = {};
         if (password) {
@@ -87,7 +107,7 @@ exports.patchUser = async(req, res) => {
         if (gender) { updateData.gender = gender; };
         if (nickname) { updateData.nickname = nickname; };
 
-        // 회원 정보 업데이트
+        // 유저 정보 업데이트
         await User.update(updateData, { where: { userId } });
 
         return res.status(200).json({ message: '회원정보가 성공적으로 업데이트되었습니다.' });
@@ -105,9 +125,7 @@ exports.deleteUser = async (req, res) => {
       
     try {
       const user = await User.findOne({ where: { userId } });
-      if (!user) {
-        return res.status(404).json({ message: '회원을 찾을 수 없습니다.' });
-      }
+      if (!user) return res.status(404).json({ message: '회원을 찾을 수 없습니다.' });
     
       await User.destroy({ where: { userId } });
   
@@ -119,7 +137,3 @@ exports.deleteUser = async (req, res) => {
     }
   };
 
-// 특정 유저 한명 조회
-exports.getUser = async (req, res) => { 
-    
-}
