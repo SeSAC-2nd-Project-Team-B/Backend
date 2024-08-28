@@ -1,4 +1,4 @@
-const userCouponModel = (sequelize, DataTypes) => {
+const UserCouponModel = (sequelize, DataTypes) => {
     const UserCoupon = sequelize.define('UserCoupon', {
         
         // 사용자 쿠폰 식별 번호
@@ -36,4 +36,4 @@ const userCouponModel = (sequelize, DataTypes) => {
     return UserCoupon;
 };
 
-module.exports = userCouponModel;
+module.exports = UserCouponModel;

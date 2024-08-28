@@ -1,4 +1,4 @@
-const locationModel = (sequelize, DataTypes) => {
+const LocationModel = (sequelize, DataTypes) => {
     const Location = sequelize.define('Location', {
         
         // 위치 식별 번호
@@ -35,4 +35,4 @@ const locationModel = (sequelize, DataTypes) => {
     return Location;
 };
 
-module.exports = locationModel;
+module.exports = LocationModel;

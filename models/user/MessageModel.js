@@ -1,4 +1,4 @@
-const messageModel = (sequelize, DataTypes) => {
+const MessageModel = (sequelize, DataTypes) => {
     const Message = sequelize.define('Message', {
         
         // 메세지 식별 번호
@@ -51,4 +51,4 @@ const messageModel = (sequelize, DataTypes) => {
     return Message;
 };
 
-module.exports = messageModel;
+module.exports = MessageModel;
