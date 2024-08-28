@@ -49,14 +49,15 @@ const ProductModel = (sequelize, DataTypes) =>{
     }
 );
     return Product;
+    Product.associate = function (models) {
+        Product.belongsTo(models.User, {foreignKey:'userId'});
+        Product.hasMany(models.ProductHashtag, {foreignKey: 'productId'});
+        Product.hasOne(models.ProductImage, {foreignKey: 'productId'});
+        Product.hasOne(models.Category,{foreignKey: 'productId'});
+        Product.hasOne(models.Like,{foreignKey: 'productId'});
+        Product.hasOne(models.Report,{foreignKey: 'productId'});
 }
 
-Product.associate = function (models) {
-    Product.belongsTo(models.User,{foreignKey:'userId'});
-    Product.hasMany(models.ProductImage,{foreignKey: 'productId'});
-    Product.hasOne(models.Category,{foreignKey: 'productId'});
-    Product.hasOne(models.Like,{foreignKey: 'productId'});
-    Product.hasOne(models.Report,{foreignKey: 'productId'});
 }
 
 
