@@ -24,6 +24,7 @@ const User = require("../models/user/UserModel")(sequelize, Sequelize);
 
 const Product = require('../models/product/ProductModel')(sequelize,Sequelize);
 const ProductImage = require('../models/product/ProductImageModel')(sequelize,Sequelize);
+const ProductHashtag = require('../models/product/ProductHashtagModel')(sequelize,Sequelize);
 const NewProduct = require('../models/product/NewProductModel')(sequelize,Sequelize);
 const Review = require('../models/product/ReviewModel')(sequelize,Sequelize);
 const Like = require('../models/product/LikeModel')(sequelize,Sequelize);
@@ -39,6 +40,7 @@ db.User = User;
 
 db.Product = Product;
 db.ProductImage = ProductImage;
+db.ProductHashtag = ProductHashtag;
 db.NewProduct = NewProduct;
 db.Review = Review;
 db.Like = Like;
@@ -56,6 +58,7 @@ const syncModels = async () => {
 
   await Product.sync();
   await ProductImage.sync();
+  await ProductHashtag.sync();
   await NewProduct.sync();
   await Like.sync();
   await Report.sync();

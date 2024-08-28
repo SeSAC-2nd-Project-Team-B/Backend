@@ -12,10 +12,13 @@ const ProductHashtagModel = (sequelize, DataTypes) =>{
         },
         // 해시태그 인덱스
         hashtagId :{
-            type:DataTypes.VARCHAR(100),
+            type:DataTypes.STRING(100),
             allowNull:false,
-            onUpdate: 'CASCADE',
-            onDelete: 'CASCADE'
+        },
+        // 해시태그 명
+        hashtagName :{
+            type:DataTypes.STRING(100),
+            allowNull:false,
         },
         // 상품 인덱스
         productId :{
@@ -30,6 +33,9 @@ const ProductHashtagModel = (sequelize, DataTypes) =>{
         timestamps : true, 
     }
 );
+ProductHashtag.associate = function (models) {
+    ProductHashtag.belongsTo(models.Product,{foreignKey:"productId", sourceKey:"productId"});
+}
     return ProductHashtag;
 }
 
