@@ -35,7 +35,7 @@ const messageModel = (sequelize, DataTypes) => {
 
     }, 
         {
-            tableName: 'messages',
+            tableName: 'Messages',
             freezeTableName: true,
             timestamps: true,
         }

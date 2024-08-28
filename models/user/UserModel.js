@@ -67,7 +67,7 @@ const userModel = (sequelize, DataTypes) => {
         },
     }, 
         {
-            tableName: 'user',
+            tableName: 'User',
             freezeTableName: true,
             timestamps: true, // 유저생성일자(createdAt), 유저정보수정일자(updatedAt)
         }

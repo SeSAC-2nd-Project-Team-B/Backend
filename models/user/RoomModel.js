@@ -22,7 +22,7 @@ const roomModel = (sequelize, DataTypes) => {
         },
     }, 
         {
-            tableName: 'room',
+            tableName: 'Room',
             freezeTableName: true,
             timestamps: true, // 생성일자(createdAt), 수정일자(updatedAt)
         }

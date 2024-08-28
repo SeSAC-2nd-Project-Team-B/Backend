@@ -22,7 +22,7 @@ const userCouponModel = (sequelize, DataTypes) => {
         },
     }, 
     {
-        tableName: 'user_coupon',
+        tableName: 'UserCoupon',
         freezeTableName: true,
         timestamps: false,
     });
