@@ -22,7 +22,7 @@ const locationModel = (sequelize, DataTypes) => {
         },
     }, 
     {
-        tableName: 'location',
+        tableName: 'Location',
         freezeTableName: true,
         timestamps: false,
     });

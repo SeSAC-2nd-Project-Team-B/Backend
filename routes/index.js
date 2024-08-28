@@ -1,9 +1,9 @@
 const express = require('express');
 const router = express.Router();
 
-const Ruser = require('./index/Ruser');
-const Rroom = require('./index/Rroom');
-const Rcoupon = require('./index/Rcoupon');
+const Ruser = require('./Ruser');
+const Rroom = require('./Rroom');
+const Rcoupon = require('./Rcoupon');
 
 router.use("/user", Ruser);
 router.use("/room", Rroom);

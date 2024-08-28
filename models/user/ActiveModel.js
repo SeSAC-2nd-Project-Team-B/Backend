@@ -28,7 +28,7 @@ const activeModel = (sequelize, DataTypes) => {
             }
         ],
 
-        tableName: 'active',
+        tableName: 'Active',
         freezeTableName: true,
         timestamps: false,
     });

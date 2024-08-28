@@ -11,13 +11,13 @@ const sequelize = new Sequelize(
 );
 
 // 모델 불러오기
-const Active = require("./activeModel")(sequelize, Sequelize);
-const Coupon = require("./couponModel")(sequelize, Sequelize);
-const Location = require("./locationModel")(sequelize, Sequelize);
-const Message = require("./messageModel")(sequelize, Sequelize);
-const Room = require("./roomModel")(sequelize, Sequelize);
-const UserCoupon = require("./userCouponModel")(sequelize, Sequelize);
-const User = require("./userModel")(sequelize, Sequelize);
+const Active = require("./ActiveModel")(sequelize, Sequelize);
+const Coupon = require("./CouponModel")(sequelize, Sequelize);
+const Location = require("./LocationModel")(sequelize, Sequelize);
+const Message = require("./MessageModel")(sequelize, Sequelize);
+const Room = require("./RoomModel")(sequelize, Sequelize);
+const UserCoupon = require("./UserCouponModel")(sequelize, Sequelize);
+const User = require("./UserModel")(sequelize, Sequelize);
 
 db.Active = Active;
 db.Coupon = Coupon;
