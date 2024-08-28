@@ -1,4 +1,4 @@
-const activeModel = (sequelize, DataTypes) => {
+const ActiveModel = (sequelize, DataTypes) => {
     const Active = sequelize.define('Active', {
         
         // 사용자 식별 번호
@@ -41,4 +41,4 @@ const activeModel = (sequelize, DataTypes) => {
     return Active;
 };
 
-module.exports = activeModel;
+module.exports = ActiveModel;

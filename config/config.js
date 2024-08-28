@@ -6,7 +6,6 @@ dotenv.config({
   path: path.resolve(__dirname, '..', envFile)
 });
 
-
 const config = {
   "development": {
     "username": process.env.DBUSER,
@@ -17,4 +16,5 @@ const config = {
   }
 }
 
+console.log(config);
 module.exports = config;

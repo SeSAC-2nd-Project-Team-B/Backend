@@ -1,4 +1,4 @@
-const roomModel = (sequelize, DataTypes) => {
+const RoomModel = (sequelize, DataTypes) => {
     const Room = sequelize.define('Room', {
         
         // 채팅방 식별 번호
@@ -38,4 +38,4 @@ const roomModel = (sequelize, DataTypes) => {
     return Room;
 };
 
-module.exports = roomModel;
+module.exports = RoomModel;

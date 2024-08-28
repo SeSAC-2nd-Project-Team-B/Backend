@@ -1,7 +1,7 @@
 const express = require('express');
 const app = express();
 const router = require("./routes/index");
-const { sequelize } = require("./models/index");
+const { sequelize } = require("./models/Index");
 const path = require("path");
 const dotenv = require("dotenv");
 

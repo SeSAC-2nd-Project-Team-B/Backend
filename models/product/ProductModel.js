@@ -12,7 +12,7 @@ const ProductModel = (sequelize, DataTypes) =>{
         },
         // 상품명 (제목)
         productName :{
-            type:DataTypes.VARCHAR(20),
+            type:DataTypes.STRING(20),
             allowNull:false,
             onUpdate: 'CASCADE',
             onDelete: 'CASCADE'
@@ -27,7 +27,7 @@ const ProductModel = (sequelize, DataTypes) =>{
             defaultValue : 0
         },
         content:{
-            type:DataTypes.VARCHAR(2000),
+            type:DataTypes.STRING(2000),
             allowNull : false,
         },
         viewCount:{
@@ -36,7 +36,7 @@ const ProductModel = (sequelize, DataTypes) =>{
             defaultValue : 0
         },
         status:{
-            type:DataTypes.VARCHAR(),
+            type:DataTypes.STRING(10),
             allowNull : true,
         },
     },
