@@ -35,8 +35,13 @@ const LikeModel = (sequelize, DataTypes) =>{
         timestamps : true, 
     }
 );
+Like.associate = function (models) {
+    Like.belongsTo(models.Product,{foreignKey:"productId", sourceKey:"productId"});
+    Like.belongsTo(models.User,{foreignKey:"userId", sourceKey:"userId"});
+}
     return Like;
 }
+
 
 module.exports=LikeModel;
 

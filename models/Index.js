@@ -39,6 +39,7 @@ db.User = User;
 
 db.Product = Product;
 db.ProductImage = ProductImage;
+db.ProductHashtag = ProductHashtag;
 db.NewProduct = NewProduct;
 db.Review = Review;
 db.Like = Like;
@@ -56,6 +57,7 @@ const syncModels = async () => {
 
   await Product.sync();
   await ProductImage.sync();
+  await ProductHashtag.sync();
   await NewProduct.sync();
   await Like.sync();
   await Report.sync();

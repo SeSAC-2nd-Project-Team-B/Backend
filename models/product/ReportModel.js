@@ -35,8 +35,13 @@ const ReportModel = (sequelize, DataTypes) =>{
         timestamps : true, 
     }
 );
+Report.associate = function (models) {
+    Report.belongsTo(models.Product,{foreignKey:"productId", sourceKey:"productId"});
+    Report.belongsTo(models.User,{foreignKey:"userId", sourceKey:"userId"});
+}
     return Report;
 }
+
 
 module.exports=ReportModel;
 

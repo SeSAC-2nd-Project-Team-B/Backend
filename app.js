@@ -23,7 +23,9 @@ app.use(router);
 
 
 sequelize
-    .sync({ force: false })
+    // sequelize 로그 on 시 밑 라인 주석 해제필요
+    // .sync({ force: false})
+    .sync({ force: false, logging: false })
     .then(() => {
         app.listen(port, () => {
             console.log('Database connected!');
