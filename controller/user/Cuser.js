@@ -1,7 +1,7 @@
 const db = require('../../models/Index');
-const { User } = require('../../models/user');
+const { User } = require('../../models/user/UserModel');
 const { Op } = require('sequelize');
-const encUtil = require("../utils/encrypt");
+const encUtil = require("../../utils/encrypt");
 
 // 유저 생성
 exports.postUser = async(req, res) => {
@@ -119,3 +119,7 @@ exports.deleteUser = async (req, res) => {
     }
   };
 
+// 특정 유저 한명 조회
+exports.getUser = async (req, res) => { 
+    
+}
