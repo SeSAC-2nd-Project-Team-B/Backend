@@ -1,3 +1,5 @@
+const { Product } = require("../Index");
+
 // Product 모델 정의
 const ProductModel = (sequelize, DataTypes) =>{
     const Product = sequelize.define(
@@ -38,6 +40,7 @@ const ProductModel = (sequelize, DataTypes) =>{
         status:{
             type:DataTypes.STRING(10),
             allowNull : true,
+            defaultValue:"판매중"
         },
     },
     {
@@ -47,6 +50,15 @@ const ProductModel = (sequelize, DataTypes) =>{
 );
     return Product;
 }
+
+Product.associate = function (models) {
+    Product.belongsTo(models.User,{foreignKey:'userId'});
+    Product.hasMany(models.ProductImage,{foreignKey: 'productId'});
+    Product.hasOne(models.Category,{foreignKey: 'productId'});
+    Product.hasOne(models.Like,{foreignKey: 'productId'});
+    Product.hasOne(models.Report,{foreignKey: 'productId'});
+}
+
 
 module.exports=ProductModel;
 

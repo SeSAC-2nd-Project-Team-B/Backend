@@ -38,5 +38,10 @@ const ReportModel = (sequelize, DataTypes) =>{
     return Report;
 }
 
+Report.associate = function (models) {
+    Report.belongsTo(models.Product,{foreignKey:"productId", sourceKey:"productId"});
+    Report.belongsTo(models.User,{foreignKey:"userId", sourceKey:"userId"});
+}
+
 module.exports=ReportModel;
 

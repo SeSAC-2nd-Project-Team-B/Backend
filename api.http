@@ -1,0 +1,49 @@
+@server = http://localhost:8080
+@productId = 1
+@team_id = 1
+### 전체 상품 조회
+GET {{server}}/product
+
+### id로 상품 조회
+GET {{server}}/product/{{productId}}
+
+### 상품 추가 
+POST {{server}}/product/write
+Content-Type: application/json ; charset=UTF-8
+
+{
+    "productName" : "고슴도치 분양합니다.",
+    "userId": 1,
+    "price": 30000,
+    "content": "야옹",
+    
+}
+
+### 특정 상품 변경
+//UPDATE `Player` SET `team_id`=?,`updatedAt`=? WHERE `productId` = ?
+PATCH {{server}}/product/{{productId}}
+Content-Type: application/json ; charset=UTF-8
+
+{
+    "team_id" :2  
+}
+
+### 특정 선수 방출(삭제)
+DELETE {{server}}/players/{{productId}}
+
+
+
+### 전체 팀 조회
+GET {{server}}/teams
+
+### 전체 팀 조회 + 이름 순 정렬
+GET {{server}}/teams?sort=name_asc
+
+### 팀 이름 검색
+GET {{server}}/teams?search=KT
+
+### 특정 팀 조회
+GET {{server}}/teams/{{team_id}}
+
+### 특정 팀의 모든 선수 조회
+GET {{server}}/teams/{{team_id}}/players
