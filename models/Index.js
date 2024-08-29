@@ -26,8 +26,9 @@ const Product = require('./product/ProductModel')(sequelize,Sequelize);
 const ProductImage = require('./product/ProductImageModel')(sequelize,Sequelize);
 const NewProduct = require('./product/NewProductModel')(sequelize,Sequelize);
 const Review = require('./product/ReviewModel')(sequelize,Sequelize);
-const Like = require('./product/LikeModel')(sequelize,Sequelize);
+const Likes = require('./product/LikesModel')(sequelize,Sequelize);
 const Report = require('./product/ReportModel')(sequelize,Sequelize);
+const ProductHashtag = require('./product/ProductHashtagModel')(sequelize,Sequelize);
 
 db.Active = Active;
 db.Coupon = Coupon;
@@ -42,7 +43,7 @@ db.ProductImage = ProductImage;
 db.ProductHashtag = ProductHashtag;
 db.NewProduct = NewProduct;
 db.Review = Review;
-db.Like = Like;
+db.Likes = Likes;
 db.Report = Report;
 
 // 모델 동기화
@@ -59,7 +60,7 @@ const syncModels = async () => {
   await ProductImage.sync();
   await ProductHashtag.sync();
   await NewProduct.sync();
-  await Like.sync();
+  await Likes.sync();
   await Report.sync();
 };
 

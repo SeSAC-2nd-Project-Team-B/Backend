@@ -1,4 +1,4 @@
-// const { Product, ProductImage, NewProduct, Review, Like, Report } = require('../models/index');
+// const { Product, ProductImage, NewProduct, Review, Likes, Report } = require('../models/index');
 
 // 전체 상품 리스트 /product/?
 exports.getProductList = async (req, res) => {

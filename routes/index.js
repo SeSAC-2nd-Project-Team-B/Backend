@@ -4,10 +4,13 @@ const router = express.Router();
 const Ruser = require('./Ruser');
 const Rroom = require('./Rroom');
 const Rcoupon = require('./Rcoupon');
+const Rloginout = require('./Rloginout');
 
 router.use("/user", Ruser);
 router.use("/room", Rroom);
 router.use("/coupon", Rcoupon);
+router.use("/", Rloginout);
+
 
 
 
