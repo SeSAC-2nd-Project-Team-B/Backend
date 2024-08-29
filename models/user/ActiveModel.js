@@ -11,13 +11,15 @@ const ActiveModel = (sequelize, DataTypes) => {
         // 활성화 상태
         isActive: {
             type: DataTypes.BOOLEAN,
-            allowNull: false
+            allowNull: false,
+            default: 1
         },
 
         // 관리자 여부
         isAdmin: {
             type: DataTypes.BOOLEAN,
-            allowNull: false
+            allowNull: false,
+            default: 0
         },
     }, 
     {
@@ -35,7 +37,7 @@ const ActiveModel = (sequelize, DataTypes) => {
 
     // 관계 설정
     Active.associate = (models) => {
-        Active.belongsTo(models.User, { foreignKey: 'userId' }); // 일대일 : 각 Active는 하나의 유저
+        Active.belongsTo(models.User, { foreignKey: 'userId',  onDelete: 'CASCADE' }); // 일대일 : 각 Active는 하나의 유저
     };
 
     return Active;
