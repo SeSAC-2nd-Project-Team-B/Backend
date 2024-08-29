@@ -14,21 +14,20 @@ const sequelize = new Sequelize(
 
 
 // 모델 불러오기
-const Active = require("../models/user/ActiveModel")(sequelize, Sequelize);
-const Coupon = require("../models/user/CouponModel")(sequelize, Sequelize);
-const Location = require("../models/user/LocationModel")(sequelize, Sequelize);
-const Message = require("../models/user/MessageModel")(sequelize, Sequelize);
-const Room = require("../models/user/RoomModel")(sequelize, Sequelize);
-const UserCoupon = require("../models/user/UserCouponModel")(sequelize, Sequelize);
-const User = require("../models/user/UserModel")(sequelize, Sequelize);
+const Active = require("./user/ActiveModel")(sequelize, Sequelize);
+const Coupon = require("./user/CouponModel")(sequelize, Sequelize);
+const Location = require("./user/LocationModel")(sequelize, Sequelize);
+const Message = require("./user/MessageModel")(sequelize, Sequelize);
+const Room = require("./user/RoomModel")(sequelize, Sequelize);
+const UserCoupon = require("./user/UserCouponModel")(sequelize, Sequelize);
+const User = require("./user/UserModel")(sequelize, Sequelize);
 
-const Product = require('../models/product/ProductModel')(sequelize,Sequelize);
-const ProductImage = require('../models/product/ProductImageModel')(sequelize,Sequelize);
-const ProductHashtag = require('../models/product/ProductHashtagModel')(sequelize,Sequelize);
-const NewProduct = require('../models/product/NewProductModel')(sequelize,Sequelize);
-const Review = require('../models/product/ReviewModel')(sequelize,Sequelize);
-const Like = require('../models/product/LikeModel')(sequelize,Sequelize);
-const Report = require('../models/product/ReportModel')(sequelize,Sequelize);
+const Product = require('./product/ProductModel')(sequelize,Sequelize);
+const ProductImage = require('./product/ProductImageModel')(sequelize,Sequelize);
+const NewProduct = require('./product/NewProductModel')(sequelize,Sequelize);
+const Review = require('./product/ReviewModel')(sequelize,Sequelize);
+const Like = require('./product/LikeModel')(sequelize,Sequelize);
+const Report = require('./product/ReportModel')(sequelize,Sequelize);
 
 db.Active = Active;
 db.Coupon = Coupon;

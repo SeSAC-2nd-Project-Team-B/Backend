@@ -16,10 +16,26 @@ const LocationModel = (sequelize, DataTypes) => {
         },
 
         // 위치 정보
-        locationInfo: {
-            type: DataTypes.TEXT,
+        depth1: {
+            type: DataTypes.STRING(50),
+            allowNull: false
+        },
+        
+        depth2: {
+            type: DataTypes.STRING(50),
+            allowNull: false
+        },
+
+        depth3: {
+            type: DataTypes.STRING(50),
+            allowNull: false
+        },
+
+        depth4: {
+            type: DataTypes.STRING(50),
             allowNull: true
         },
+
     }, 
     {
         tableName: 'Location',
@@ -29,7 +45,7 @@ const LocationModel = (sequelize, DataTypes) => {
 
     // 관계 설정
     Location.associate = (models) => {
-        Location.belongsTo(models.User, { foreignKey: 'userId' }); // 다대일: 각 위치는 하나의 유저
+        Location.belongsTo(models.User, { foreignKey: 'userId',  onDelete: 'CASCADE' }); // 다대일: 각 위치는 하나의 유저
     };
 
     return Location;

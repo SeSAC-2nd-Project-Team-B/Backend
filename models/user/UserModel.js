@@ -17,13 +17,13 @@ const UserModel = (sequelize, DataTypes) => {
 
         // 이메일 (아이디)
         email: {
-            type: DataTypes.STRING(20),
+            type: DataTypes.STRING(100),
             allowNull: false
         },
 
         // 비밀번호
         password: {
-            type: DataTypes.STRING(20),
+            type: DataTypes.STRING(100),
             allowNull: false
         },
 
@@ -57,13 +57,15 @@ const UserModel = (sequelize, DataTypes) => {
         // 충전 금액
         money: {
             type: DataTypes.INTEGER,
-            allowNull: false
+            allowNull: false,
+            defaultValue: 0,
         },
 
         // 포인트
         point: {
             type: DataTypes.INTEGER,
-            allowNull: false
+            allowNull: false,
+            defaultValue: 0,
         },
     }, 
         {
@@ -81,6 +83,7 @@ const UserModel = (sequelize, DataTypes) => {
         User.hasMany(models.Message, { foreignKey: 'userId' }); // 일대다 : 각 유저는 여러개의 메세지
         User.hasMany(models.UserCoupon, { foreignKey: 'userId' }); // 일대다 : 각 유저는 여러 개의 userCoupon
         User.hasMany(models.Report, { foreignKey: 'userId' }); // 일대다 : 각 유저는 여러개의 신고
+        User.hasMany(models.Location, { foreignKey: 'userId'}); // 일대다 : 각 유저는 여러개의 위치
         User.hasOne(models.Active, { foreignKey: 'userId' }); // 일대일: 각 유저는 하나의 Active
       };
 
