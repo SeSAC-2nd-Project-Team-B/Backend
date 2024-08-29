@@ -20,7 +20,7 @@ router.get('/:productId', controller.getProduct);
 // router.delete('/:productId', controller.deleteProduct);
 
 // // 좋아요 추가, 삭제
-// router.post('/like/:productId', controller.postLike);
+// router.post('/likes/:productId', controller.postLikes);
 
 // // 신고 추가, 삭제 
 // router.post('/report/:productId', controller.postReport);

@@ -54,7 +54,7 @@ const ProductModel = (sequelize, DataTypes) =>{
         Product.hasMany(models.ProductHashtag, {foreignKey: 'productId'});
         Product.hasOne(models.ProductImage, {foreignKey: 'productId'});
         Product.hasOne(models.Category,{foreignKey: 'productId'});
-        Product.hasOne(models.Like,{foreignKey: 'productId'});
+        Product.hasOne(models.Likes,{foreignKey: 'productId'});
         Product.hasOne(models.Report,{foreignKey: 'productId'});
 }
 
