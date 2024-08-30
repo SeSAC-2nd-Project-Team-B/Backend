@@ -39,7 +39,7 @@ const ProductModel = (sequelize, DataTypes) =>{
         },
         status:{
             type:DataTypes.STRING(10),
-            allowNull : true,
+            allowNull : false,
             defaultValue:"판매중"
         },
     },
