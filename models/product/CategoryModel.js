@@ -11,8 +11,8 @@ const CategoryModel = (sequelize, DataTypes) =>{
             allowNull : false,
         },
         //카테고리명
-        category_name:{
-            type:DataTypes.VARCHAR(255),
+        categoryName:{
+            type:DataTypes.STRING(255),
             allowNull:false,
         },
         // 상품 인덱스
@@ -23,14 +23,15 @@ const CategoryModel = (sequelize, DataTypes) =>{
             onDelete: 'CASCADE'
         },
         //상위 카테고리 인덱스
-        parent_category_id:{
-            type:DataTypes.INT,
-            allowNull : true,
+        parentCategoryId:{
+            type:DataTypes.INTEGER,
+            allowNull : false,
         },
         // 카테고리 레벨
         level:{
             type:DataTypes.INTEGER,
             allowNull : false,
+            defaultValue:0
         },
     },
     {
@@ -38,11 +39,12 @@ const CategoryModel = (sequelize, DataTypes) =>{
         timestamps : true, 
     }
 );
+    Category.associate = function (models) {
+    Category.belongsTo(models.Product,{foreignKey:"productId", sourceKey:"productId"});
+}
     return Category;
 }
 
-Category.associate = function (models) {
-    Category.belongsTo(models.Product,{foreignKey:"productId", sourceKey:"productId"});
-}
+
 module.exports=CategoryModel;
 
