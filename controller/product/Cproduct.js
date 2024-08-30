@@ -3,7 +3,12 @@ const { Product, ProductImage, Category, NewProduct, Review, Likes, Report } = r
 // 전체 상품 리스트 /product/list
 exports.getProductList = async (req, res) => {
     try {
-        const product = await Product.findAll();
+        const product = await Product.findAll({
+            order : [['productId','DESC']],
+            raw : true,
+            limit: 10,
+            offset: (page - 1) * 10,
+        });
         res.json(product);
         console.log('전체 상품 리스트');
     } catch (err) {
@@ -16,13 +21,19 @@ exports.getProductList = async (req, res) => {
 exports.getProduct = async (req, res) => {
     try {
         console.log('req.query > ', req.query);
-        const { productId } = req.query;
+        const { productId, userId } = req.query;
         console.log('1개 상품 보기', productId);
         const product = await Product.findOne({
             where: { productId },
         });
-
-        res.json(product);
+        const likes = await Likes.findOne({
+            where: { 
+                productId,
+                userId 
+            },
+        });
+        const likesCount = likes.likesCount; //좋아요 개수
+        res.json(likesCount);
     } catch (err) {
         res.status(500).json({ message: 'getProduct 서버 오류', err: err.message });
     }
@@ -71,6 +82,7 @@ exports.postProduct = async (req, res) => {
             price,
             content,
         });
+
         // 카테고리 추가
         // for (i = 1; i < 4; i++) {
         //     console.log(

@@ -7,7 +7,7 @@ insert into user values(1,"test","abc@email.com","1234",1,20,36.5,"a.img",1000,3
 
 desc product;
 
-select * from product;
+select * from product order by createdAt desc;
 insert into category values(1,"여성패션",8,0,1,now(),now());
 insert into category values(2,"의류",8,1,2,now(),now());
 insert into category values(3,"상의",8,2,3,now(),now());
@@ -26,3 +26,7 @@ select * from product order by createdAt DESC;
 delete from product where productId=1;
 
 select * from category;
+
+use sesac_project_2;
+
+desc likes;
