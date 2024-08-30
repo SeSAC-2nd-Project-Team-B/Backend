@@ -1,4 +1,4 @@
-@server = http://localhost:8080
+@server = http://localhost:8000
 @productId = 1
 @userId = 1
 

@@ -9,6 +9,12 @@ const RoomModel = (sequelize, DataTypes) => {
             allowNull: false
         },
 
+        // 제품 식별 번호
+        productId: {
+            type: DataTypes.BIGINT,
+            allowNull: false
+        },
+
         // 보내는 사람 (구매자)
         senderId: {
             type: DataTypes.BIGINT,
@@ -33,6 +39,7 @@ const RoomModel = (sequelize, DataTypes) => {
         Room.belongsTo(models.User, { foreignKey: 'senderId', as: 'Sender' }); // 다대일 : 각 채팅방은 하나의 회원(보내는 사람)
         Room.belongsTo(models.User, { foreignKey: 'receiverId', as: 'Receiver' }); // 다대일 : 각 채팅방은 하나의 회원(받는 사람)
         Room.hasMany(models.Message, { foreignKey: 'roomId' }); // 일대다 : 각 채팅방은 여러 개의 메세지
+        Room.belongsTo(models.Product, { foreignKey: 'productId' }); // 다대일 : 각 채팅방은 하나의 상품
     };
   
     return Room;

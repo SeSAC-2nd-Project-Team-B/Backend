@@ -33,6 +33,12 @@ const MessageModel = (sequelize, DataTypes) => {
             allowNull: false
         },
 
+        // 메시지 확인 여부
+        isRead: {
+            type: DataTypes.BOOLEAN,
+            allowNull: false,
+            defaultValue: false
+        }
     }, 
         {
             tableName: 'Messages',
