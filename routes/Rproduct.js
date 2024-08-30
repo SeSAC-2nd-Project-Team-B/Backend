@@ -5,13 +5,15 @@ const router = express.Router();
 // 기본 요청 경로 localhost:PORT/product
 
 // 전체 상품 리스트
-// router.get('/', controller.getProductList);
+router.get('/list', controller.getProductList);
 
 // 상품 상세 페이지
-router.get('/:productId', controller.getProduct);
+router.get('/list/:productId', controller.getProduct);
 
-// 상품 등록
-// router.post('/write', controller.postProduct);
+
+// 상품 등록 페이지
+router.get('/write', controller.getProductWrite);
+router.post('/write', controller.postProduct);
 
 // // 특정 상품 수정
 // router.patch('/:productId', controller.patchProduct);
