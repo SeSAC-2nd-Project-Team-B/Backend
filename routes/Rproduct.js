@@ -1,5 +1,7 @@
 const express = require('express');
 const controller = require('../controller/product/Cproduct');
+const likesController = require('../service/likesService');
+const reportController = require('../service/reportService');
 const router = express.Router();
 
 // 기본 요청 경로 localhost:PORT/product
@@ -26,7 +28,10 @@ router.patch('/update', controller.patchProductUpdate);
 router.delete('/delete', controller.deleteProduct);
 
 // // 좋아요 추가, 삭제
-// router.post('/likes/:productId', controller.postLikes);
+
+router.get('/likes', likesController.getLikes);
+
+router.post('/likes', likesController.postLikes);
 
 // // 신고 추가, 삭제 
 // router.post('/report/:productId', controller.postReport);

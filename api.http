@@ -1,24 +1,26 @@
-@server = http://localhost:8080
-@productId = 1
+@server = http://localhost:8000
+@productId = 27
 @userId = 1
 
 GET {{server}}/user/1
+
+POST {{server}}/user/2
 
 ### 전체 상품 조회
 GET {{server}}/product/list
 
 ### id로 상품 조회
-GET {{server}}/product/productId={{productId}}
+GET {{server}}/product/read?productId={{productId}}&userId={{userId}}
 
 ### 상품 추가 
 POST {{server}}/product/write
 Content-Type: application/json ; charset=UTF-8
 
 {
-    "productName" : "빨간 옷",
+    "productName" : "노란 옷",
     "userId": 1,
     "price": 4000,
-    "content": "야옹이",
+    "content": "노란 옷 팔아요",
     "categoryName1" : "여성패션",
     "categoryName2" : "의류",
     "categoryName3" : "상의"
@@ -27,7 +29,7 @@ Content-Type: application/json ; charset=UTF-8
 
 ### 특정 상품 변경
 //UPDATE `Player` SET `team_id`=?,`updatedAt`=? WHERE `productId` = ?
-PATCH {{server}}/product/{{productId}}
+PATCH {{server}}/product/update?productId={{productId}}
 Content-Type: application/json ; charset=UTF-8
 
 {
@@ -41,6 +43,8 @@ Content-Type: application/json ; charset=UTF-8
 
 }
 
-### 특정 선수 방출(삭제)
-DELETE {{server}}/players/{{productId}}
+### 특정 상품 삭제
+DELETE {{server}}/product/delete?productId={{productId}}
 
+### 좋아요 추가, 삭제 
+POST {{server}}/product/likes?productId={{productId}}
