@@ -1,40 +1,46 @@
-@server = http://localhost:8000
-@productId = 6
-@productName = "고슴도치"
+@server = http://localhost:8080
+@productId = 1
+@userId = 1
 
-
-# ### 전체 유저 조회
-# GET {{server}}/user
-
-# ### 유저 추가 
-# POST {{server}}/user
-# Content-Type: application/json ; charset=UTF-8
-
-# {
-#     "nickname" : "test",
-#     "email": "abc@test.com",
-#     "password": "1234",
-#     "money": 0,
-#     "point": 1000
-# }
+GET {{server}}/user/1
 
 ### 전체 상품 조회
-GET {{server}}/product?productName={{productName}}
+GET {{server}}/product/list
 
 ### id로 상품 조회
-GET {{server}}/product/list/{{productId}}
+GET {{server}}/product/productId={{productId}}
 
 ### 상품 추가 
 POST {{server}}/product/write
 Content-Type: application/json ; charset=UTF-8
 
 {
-    "productName" : "고슴도치 분양합니다.",
+    "productName" : "빨간 옷",
     "userId": 1,
-    "price": 30000,
-    "content": "야옹4",
-    "stauts": "임시저장"
+    "price": 4000,
+    "content": "야옹이",
+    "categoryName1" : "여성패션",
+    "categoryName2" : "의류",
+    "categoryName3" : "상의"
+
 }
 
-### 특정 상품 삭제
-DELETE {{server}}/product/{{productId}}
+### 특정 상품 변경
+//UPDATE `Player` SET `team_id`=?,`updatedAt`=? WHERE `productId` = ?
+PATCH {{server}}/product/{{productId}}
+Content-Type: application/json ; charset=UTF-8
+
+{
+    "productName" : "빨간 옷",
+    "userId": 1,
+    "price": 4000,
+    "content": "야옹이",
+    "categoryName1" : "여성패션",
+    "categoryName2" : "의류",
+    "categoryName3" : "상의"
+
+}
+
+### 특정 선수 방출(삭제)
+DELETE {{server}}/players/{{productId}}
+

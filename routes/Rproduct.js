@@ -8,18 +8,22 @@ const router = express.Router();
 router.get('/list', controller.getProductList);
 
 // 상품 상세 페이지
-router.get('/list/:productId', controller.getProduct);
+router.get('/read', controller.getProduct);
 
-
-// 상품 등록 페이지
+// 상품 작성 페이지 
 router.get('/write', controller.getProductWrite);
+
+// 상품 등록 버튼 클릭시
 router.post('/write', controller.postProduct);
 
-// // 특정 상품 수정
-// router.patch('/:productId', controller.patchProduct);
+// 특정 상품 수정 페이지 
+router.get('/update', controller.getProductUpdate);
+
+// 특정 상품 수정 버튼 클릭시
+router.patch('/update', controller.patchProductUpdate);
 
 // // 특정 상품 삭제
-// router.delete('/:productId', controller.deleteProduct);
+router.delete('/delete', controller.deleteProduct);
 
 // // 좋아요 추가, 삭제
 // router.post('/likes/:productId', controller.postLikes);
