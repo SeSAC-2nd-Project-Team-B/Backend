@@ -24,16 +24,17 @@ router.get('/update', controller.getProductUpdate);
 // 특정 상품 수정 버튼 클릭시
 router.patch('/update', controller.patchProductUpdate);
 
-// // 특정 상품 삭제
+// 특정 상품 삭제
 router.delete('/delete', controller.deleteProduct);
 
-// // 좋아요 추가, 삭제
-
+// 상품별 찜 - 전체 개수 조회
 router.get('/likes', likesController.getLikes);
 
+// 상품 페이지 - 찜 버튼 클릭시
 router.post('/likes', likesController.postLikes);
 
-// // 신고 추가, 삭제 
-// router.post('/report/:productId', controller.postReport);
+// 상품 페이지 - 신고 버튼 클릭시
+
+router.post('/report', reportController.postReportProduct);
 
 module.exports = router;
