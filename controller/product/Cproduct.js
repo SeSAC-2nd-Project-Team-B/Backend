@@ -7,7 +7,7 @@ exports.getProductList = async (req, res) => {
             order : [['productId','DESC']],
             raw : true,
             limit: 10,
-            offset: (page - 1) * 10,
+            // offset: (page - 1) * 10,
         });
         res.json(product);
         console.log('전체 상품 리스트');
@@ -32,8 +32,9 @@ exports.getProduct = async (req, res) => {
                 userId 
             },
         });
-        const likesCount = likes.likesCount; //좋아요 개수
-        res.json(likesCount);
+        // const likesCount = likes.likesCount; //좋아요 개수
+        // res.json(likesCount);
+        res.json(product)
     } catch (err) {
         res.status(500).json({ message: 'getProduct 서버 오류', err: err.message });
     }

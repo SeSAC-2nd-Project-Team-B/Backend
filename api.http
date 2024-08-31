@@ -1,5 +1,5 @@
 @server = http://localhost:8000
-@productId = 27
+@productId = 8
 @userId = 1
 
 GET {{server}}/user/1
@@ -47,4 +47,23 @@ Content-Type: application/json ; charset=UTF-8
 DELETE {{server}}/product/delete?productId={{productId}}
 
 ### 좋아요 추가, 삭제 
-POST {{server}}/product/likes?productId={{productId}}
+GET {{server}}/product/likes?productId={{productId}}
+
+### 좋아요 클릭시
+POST {{server}}/product/likes?productId={{productId}}&userId={{userId}}
+Content-Type: application/json ; charset=UTF-8
+
+{
+    "userId": 1   
+}
+
+### 신고 클릭시
+POST {{server}}/product/report?productId={{productId}}&userId={{userId}}
+Content-Type: application/json ; charset=UTF-8
+
+{
+    "userId": 1   
+}
+
+
+

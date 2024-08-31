@@ -11,7 +11,7 @@ exports.getLikes = async (req, res) => {
             attributes: [[sequelize.fn('SUM', sequelize.col('likesCount')), 'totalLike']],
             raw: true
         });
-        console.log("likes >> ", typeof likes.totalLike);
+        console.log("likes >> ", likes.totalLike);
         if (likes.totalLike) {
             res.status(400).json({"totalLike" : likes.totalLike});
         } else {
@@ -52,10 +52,12 @@ exports.postLikes = async (req, res) => {
             console.log("isAlreadyLike > ", isAlreadyLike);
             if (isAlreadyLike.likesCount === 1) { // 유저 좋아요 1일 경우
                 console.log(`유저 좋아요가 1이므로 0으로 바뀜`);
-                await likesUpdate(productId, userId, 0);
+                await Likes.destroy({
+                    where: { productId, userId}
+                })
             } else { // 유저 좋아요 0일 경우
                 console.log(`유저 좋아요가 0이므로 1으로 바뀜`);
-                await likesUpdate(productId, userId, 1);
+                await likesCreate(productId, userId, 1);
             }
         } else {
             const isUser = await Likes.findOne({
@@ -69,12 +71,9 @@ exports.postLikes = async (req, res) => {
             if (!isUser) {
                 console.log(`product 에 대한 좋아요는 있지만,
                     ${userId}의 값은 없으므로 새로 생성한다.`);
-                likesCreate(productId, userId, 1);
+                await likesCreate(productId, userId, 1);
 
-            } else {
-                console.log("???product,userId 다 존재");
-
-            }
+            } 
         }  // else
         res.send(`${userId}번 유저가 ${productId}번 상품에 
                 좋아요를 눌렀습니다.`);
@@ -82,18 +81,6 @@ exports.postLikes = async (req, res) => {
         res.status(500).json({ message: 'postLikes 서버 오류', err: err.message });
     }
 };
-
-
-function likesUpdate(productId, userId, likesCount) {
-    Likes.update(
-        { likesCount },
-        {
-            where: {
-                productId,
-                userId,
-            },
-        })
-}
 
 function likesCreate(productId, userId, likesCount) {
     Likes.create(

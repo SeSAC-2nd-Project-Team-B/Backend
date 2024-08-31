@@ -35,6 +35,6 @@ router.post('/likes', likesController.postLikes);
 
 // 상품 페이지 - 신고 버튼 클릭시
 
-router.post('/report', reportController.postReport);
+router.post('/report', reportController.postReportProduct);
 
 module.exports = router;
