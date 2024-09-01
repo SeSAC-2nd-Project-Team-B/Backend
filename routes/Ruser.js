@@ -24,7 +24,7 @@ router.get(`/list`, authenticate(admin), controller.getUserList);
 router.get(`/:userId`, authenticate(adminOrUser), controller.getUser);
 
 // 특정 유저 내용 수정
-router.patch(`/:userId`, authenticate(adminOrUser), controller.patchUser);
+router.patch(`/:userId`, authenticate(adminOrUser), validation, controller.patchUser);
 
 // 특정 유저 삭제
 router.delete(`/:userId`, authenticate(adminOrUser), controller.deleteUser);
