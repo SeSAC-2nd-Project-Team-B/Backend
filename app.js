@@ -11,6 +11,7 @@ const cookieParser = require('cookie-parser');
 const multer = require('multer');
 const sessionMiddleware = require("./middleware/sessionMiddleware");
 const socketMiddleware = require("./middleware/socketMiddleware");
+const cors = require('cors');
 
 
 // dotenv.config(); // config.js와 중복부분(불러오지 못할 시 주석 해제)
@@ -25,6 +26,7 @@ app.use('/uploads', express.static(__dirname + '/uploads'));
 app.use('/public', express.static(path.join(__dirname + '/public')));
 app.use(sessionMiddleware);
 app.use(router);
+app.use(cors({ origin: 'http://localhost:8000', credentials: true }));
 
 socketMiddleware(server);
 
@@ -32,7 +34,7 @@ socketMiddleware(server);
 sequelize
     // sequelize 로그 on 시 밑 라인 주석 해제필요
     // .sync({ force: false})
-    .sync({ force: true, logging: false })
+    .sync({ force: false, logging: false })
     .then(() => {
         server.listen(port, () => {
             console.log('Database connected!');

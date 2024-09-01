@@ -8,17 +8,22 @@
 </head>
 <body>
     <div id="chat-container">
-        <div id="controls">
-            <button id="create-user-button">회원 생성</button>
-            <button id="create-product-button">상품 생성</button>
+        
+        <input id="token-input" type="text" placeholder="토큰을 입력하세요.">
+        <button id="fetch-user-button">사용자 정보 가져오기</button>
+        <p id="user-info"></p>
+
+        <input id="product-id-input" type="number" placeholder="상품 ID를 입력하세요.">
+        <button id="fetch-product-button" style="display: none;">상품 정보 가져오기</button>
+        <p id="product-info"></p>
+
+        <button id="start-chat-button" style="display: none;">새 채팅 시작하기</button>
+        <button id="show-rooms-button" style="display: none;">채팅방 목록 보기</button>
+        <div id="room-list" style="display: none;">
+            <h3>채팅방 목록</h3>
+            <ul id="room-list-items"></ul>
         </div>
-        <div id="ids-display">
-            <p>회원 ID: <span id="user-id"></span></p>
-            <p>상품 ID: <span id="product-id"></span></p>
-        </div>
-        <input id="user-id-input" type="hidden">
-        <input id="product-id-input" type="hidden">
-        <button id="start-chat-button">채팅 시작하기</button>
+
         <div id="chat-box" style="display: none;">
             <div id="messages"></div>
             <input id="message-input" type="text" placeholder="메시지를 입력하세요.">
@@ -30,121 +35,189 @@
     <script>
         let socket;
         let roomId;
+        let userId;
         let senderId;
-        const receiverId = 2; 
+        let receiverId;
+        let product;
         let productId;
+        let token;
 
-        // 더미 데이터 생성
-        function generateDummyUserData() {
-            return {
-                nickname: 'user2',
-                email: 'user2@example.com',
-                password: 'password456',
-                gender: 0,
-                age: 30,
-                temp: 36.8,
-                profile_image: 'profile2.jpg',
-                money: 2000,
-                point: 1000
+        // 사용자 정보 가져오기 버튼 클릭
+        document.getElementById('fetch-user-button').onclick = async () => {
+            const token = document.getElementById('token-input').value;
+
+            if (!token) {
+                alert("토큰을 입력하세요.");
+                return;
             }
-        }
 
-        function generateDummyProductData() {
-            return {
-                productName: 'Example Product',
-                userId: 1,
-                price: 10000,
-                content: 'This is an example product description.',
-                viewCount: 0,
-                status: '판매중'
+            try {
+                const response = await fetch('/user/token', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ token })
+                });
+
+                if (response.ok) {
+                    const user = await response.json();
+                    userId = user.userId;
+                    document.getElementById('user-info').textContent = `사용자 ID: ${userId}`;
+                    document.getElementById('fetch-product-button').style.display = 'inline-block';
+                    document.getElementById('start-chat-button').style.display = 'inline-block';
+                    document.getElementById('show-rooms-button').style.display = 'inline-block';
+                } else {
+                    alert("사용자를 찾을 수 없습니다.");
+                }
+            } catch (error) {
+                console.error('사용자 정보 가져오기 중 오류 발생:', error);
             }
-        }
-
-
-        document.getElementById('create-user-button').onclick = async () => {
-            const userData = generateDummyUserData();
-
-            // 회원 생성
-            const response = await fetch('/create-user', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(userData)
-            });
-            const data = await response.json();
-            senderId = data.userId;
-            document.getElementById('user-id').textContent = senderId;
-            document.getElementById('user-id-input').value = senderId;
         };
 
-        document.getElementById('create-product-button').onclick = async () => {
-            const productData = generateDummyProductData(senderId);
-
-            // 상품 생성
-            const response = await fetch('/create-product', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(productData)
-            });
-            const data = await response.json();
-            productId = data.productId;
-            document.getElementById('product-id').textContent = productId;
-            document.getElementById('product-id-input').value = productId;
-        };
-
-        // 채팅 시작하기 버튼 클릭
-        document.getElementById('start-chat-button').onclick = async () => {
-            senderId = document.getElementById('user-id-input').value;
+        // 상품 정보 가져오기 버튼 클릭
+        document.getElementById('fetch-product-button').onclick = async () => {
             productId = document.getElementById('product-id-input').value;
+
+            if (!productId) {
+                alert("상품 ID를 입력하세요.");
+                return;
+            }
+
+            try {
+                const response = await fetch(`/product/${productId}`, {
+                    method: 'GET'
+                });
+
+                if (response.ok) {
+                    product = await response.json();
+                    document.getElementById('product-info').textContent = `상품: ${product.productName} (ID: ${product.productId}), receiverId: ${product.userId}`;
+                } else {
+                    alert("상품을 찾을 수 없습니다.");
+                }
+            } catch (error) {
+                console.error('상품 정보 가져오기 중 오류 발생:', error);
+            }
+        };
+
+        // 새 채팅 시작하기 버튼 클릭
+        document.getElementById('start-chat-button').onclick = async () => {
+            senderId = userId;
+            receiverId = product.userId;
 
             try {
                 const response = await fetch('/room', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
                     body: JSON.stringify({ senderId, receiverId, productId })
                 });
 
-                const data = await response.json();
-                roomId = data.roomId;
+                if (response.ok) {
+                    const data = await response.json();
+                    roomId = data.roomId;
 
-                console.log('룸아이디:', roomId);
-                console.log('보내는 사람 아이디:', senderId);
-                console.log('받는 사람 아이디:', receiverId);
-                console.log('상품아이디:', productId);
+                    console.log('룸아이디:', roomId);
+                    console.log('구매자 아이디:', senderId);
+                    console.log('판매자 아이디:', receiverId);
+                    console.log('상품아이디:', productId);
 
-                // socket.io 초기화 및 연결
-                socket = io();
-                
-                // 채팅방에 입장
-                socket.emit('joinRoom', { roomId, senderId });
-
-                // 채팅박스 보이기
-                document.getElementById('chat-box').style.display = 'block';
-                document.getElementById('start-chat-button').style.display = 'none';
+                    // 채팅방에 입장
+                    startChat(roomId);
+                } else {
+                    alert("채팅방 생성에 실패했습니다.");
+                }
             } catch (error) {
                 console.error('채팅방 생성 중 오류 발생:', error);
             }
         };
 
-        // 메세지 보내기
-        document.getElementById('send-button').onclick = () => {
-            const messageText = document.getElementById('message-input').value;
-            socket.emit('sendMessage', {
-                roomId,
-                senderId,
-                receiverId,
-                messageText
-            });
-            document.getElementById('message-input').value = '';
+        // 채팅방 목록 보여주기 버튼 클릭
+        document.getElementById('show-rooms-button').onclick = async () => {
+            const token = document.getElementById('token-input').value;
+
+            try {
+                const response = await fetch('/room/list', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ token })
+                });
+
+                if (response.ok) {
+                    const rooms = await response.json();
+                    const roomList = document.getElementById('room-list-items');
+                    roomList.innerHTML = '';
+
+                    if (Array.isArray(rooms)) {
+                        rooms.forEach(room => {
+                            const listItem = document.createElement('li');
+                            listItem.textContent = `방 ID: ${room.roomId}, 상품 ID: ${room.productId}`;
+                            listItem.onclick = () => {
+                                roomId = room.roomId;
+                                productId = room.productId;
+                                receiverId = room.receiverId;
+                                startChat(roomId);
+                            };
+                            roomList.appendChild(listItem);
+                        });
+                    } else {
+                        console.error('배열형식이 아닙니다.', rooms);
+                    }
+
+                    document.getElementById('room-list').style.display = 'block';
+                } else {
+                    alert("채팅방을 찾을 수 없습니다.");
+                }
+            } catch (error) {
+                console.error('채팅방 목록 가져오기 중 오류 발생:', error);
+            }
         };
 
-        // 메세지 수신
-        socket.on('receiveMessage', (message) => {
-            const messages = document.getElementById('messages');
-            const messageElement = document.createElement('div');
-            messageElement.classList.add('message');
-            messageElement.textContent = `${message.senderId}: ${message.messageText}`;
-            messages.appendChild(messageElement);
-            messages.scrollTop = messages.scrollHeight; // 메시지가 쌓이면 자동 스크롤
+
+
+        // 채팅 시작 함수
+        const startChat = (roomId) => {
+            socket = io();
+
+            socket.on('receiveMessage', (message) => {
+                console.log('Received message:', message);
+
+                const messages = document.getElementById('messages');
+                const messageElement = document.createElement('div');
+                messageElement.classList.add('message');
+                messageElement.textContent = `${message.senderId}: ${message.messageText}`;
+                messages.appendChild(messageElement);
+                messages.scrollTop = messages.scrollHeight; // 메시지가 쌓이면 자동 스크롤
+            });
+
+            socket.emit('joinRoom', { roomId, senderId, productId });
+            console.log('들어간 채팅방 아이디:', roomId);
+
+            document.getElementById('chat-box').style.display = 'block';
+        };
+
+        // 메세지 보내기 함수
+        const sendMessage = () => {
+            const messageText = document.getElementById('message-input').value;
+            if (messageText.trim() !== '') {
+                socket.emit('sendMessage', {
+                    roomId,
+                    senderId,
+                    receiverId,
+                    messageText
+                });
+                document.getElementById('message-input').value = '';
+            }
+        };
+
+        document.getElementById('send-button').onclick = sendMessage;
+        document.getElementById('message-input').addEventListener('keydown', (event) => {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
         });
     </script>
 </body>

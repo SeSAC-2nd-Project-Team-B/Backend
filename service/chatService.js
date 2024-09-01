@@ -9,7 +9,7 @@ exports.createOrGetRoom = async ({ productId, senderId, receiverId }) => {
         console.log("🚀 ~ exports.1createOrGetRoom= ~ productId, senderId, receiverId:", productId, senderId, receiverId)
 
             const existsProduct = await Product.findOne({ where: { productId } });
-            console.log("🚀 ~ exports.createOrGetRoom= ~ existsProduct:", existsProduct)
+            console.log("🚀 ~ exports.createOrGetRoom= ~ existsProduct:", existsProduct.productId)
             if (!existsProduct) {
                 console.log("찾을 수 없는 상품입니다."); 
                 throw new Error("찾을 수 없는 상품입니다.");
@@ -23,11 +23,11 @@ exports.createOrGetRoom = async ({ productId, senderId, receiverId }) => {
             });
             
             if (room) {
-                console.log("기존 방이 존재하므로 해당 방으로 접속합니다.");
+                console.log(`기존 방이 존재하므로 해당 방으로 접속합니다. roomId: ${room.roomId}`);
             } else {
                 // 없으면 생성
-                console.log("방이 존재하지 않으므로 새로운 방을 생성합니다.");
                 room = await Room.create({ productId, senderId, receiverId });
+                console.log(`방이 존재하지 않으므로 새로운 방을 생성합니다. roomId: ${room.roomId}`);
             }
 
             return room;

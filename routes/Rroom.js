@@ -13,8 +13,12 @@ router.post(`/`, controller.postRoom);
 // 채팅방 전체 목록 조회
 // router.get(`/list`, controller.getRoomList);
 
+// 특정 유저의 채팅방 목록 조회 (토큰)
+router.post(`/list`, controller.getRoomByToken);
+
 // 특정 유저의 채팅방 목록 조회
 router.get(`/list/:userId`, controller.getRoomListByUserId);
+
 
 // 특정 채팅방 삭제
 // router.delete(`/:roomId`, controller.deleteRoom);

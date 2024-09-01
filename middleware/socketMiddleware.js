@@ -12,9 +12,9 @@ module.exports = (server) => {
     io.on('connection', (socket) => {
 
         // 채팅방 입장
-        socket.on('joinRoom', ({ roomId, senderId }) => {
+        socket.on('joinRoom', ({ roomId, senderId, productId }) => {
             socket.join(roomId);
-            console.log(`사용자 ${senderId}이(가) 방 ${roomId}에 입장했습니다. socket.id:${socket.id}`);
+            console.log(`사용자 ${senderId}이(가) 상품 ${productId}을(를) 위해 방 ${roomId}에 입장했습니다. socket.id:${socket.id}`);
         });
 
         // 메시지 전송
