@@ -6,6 +6,14 @@ GET {{server}}/user/1
 
 POST {{server}}/user/2
 
+### 검색 버튼 클릭시
+POST {{server}}/product/search
+Content-Type: application/json ; charset=UTF-8
+
+{
+    "searchKeyword" : "노란 옷"
+}
+
 ### 전체 상품 조회
 GET {{server}}/product/list
 

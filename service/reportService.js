@@ -37,6 +37,7 @@ exports.postReportProduct = async (req, res) => {
             // 신고 있으면 취소
             await Report.destroy({ where: { productId, userId } });
             Report.reportCount -= 1;
+            
             await Report.save();
 
             return res.status(200).json({ message: `신고가 취소 되었습니다.`, Report });
