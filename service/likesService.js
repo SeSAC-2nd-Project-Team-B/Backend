@@ -1,9 +1,10 @@
 const { Product, Likes } = require('../models/Index');
 var sequelize = require('sequelize');
 
-exports.getLikes = async (req, res) => {
+exports.getLikes = async (req, res) => {   
     try {
-        const { productId } = req.query;
+        const productId = req;
+        console.log("req > ",productId);
         const likes = await Likes.findOne({
             where: {
                 productId,
@@ -11,12 +12,14 @@ exports.getLikes = async (req, res) => {
             attributes: [[sequelize.fn('SUM', sequelize.col('likesCount')), 'totalLike']],
             raw: true
         });
-        console.log("likes >> ", likes.totalLike);
-        if (likes.totalLike) {
-            res.status(400).json({"totalLike" : likes.totalLike});
-        } else {
-            res.send('해당 상품은 좋아요 개수가 조회되지 않습니다.');
-        }
+        const likeCnt = likes.totalLike;
+        return likes ? likeCnt : 0 ;
+
+        // if (likeCnt) {
+        //     return likeCnt;
+        // } else {
+        //     return '해당 상품은 좋아요 개수가 조회되지 않습니다.';
+        // }
     } catch (err) {
         res.status(500).json({ message: 'getLikes 서버 오류', err: err.message });
     }
@@ -26,7 +29,7 @@ exports.postLikes = async (req, res) => {
     console.log("postlikes >>> --------------");
 
     try {
-        console.log('req.query > ', req.query);
+        console.log('req.query > ', req);
         const { productId, userId } = req.query;
         const userlikes = await Likes.findOne({
             where: {

@@ -1,90 +1,113 @@
-const Op = require('sequelize').Op;
+const sequelize = require('sequelize');
+const Op = sequelize.Op;
 const { Product, ProductImage, Category, NewProduct, Review, Likes, Report } = require('../../models/Index');
 
+const { getNproductPrice } = require('../../utils/apiHandler');
+const { getLikes, postLikes } = require('../../service/likesService');
+const { getReport , postReportProduct} = require('../../service/reportService');
+
+const axios = require('axios');
+const dotenv = require('dotenv');
+dotenv.config();
+
+let searchWord ='';
+
 // 검색 버튼 클릭시
-exports.postSearch = async (req,res) => {
+exports.postSearch = async (req, res) => {
     try {
-        console.log("searchKeyword: ",req.body);
-        const {searchKeyword} = req.body;
+        console.log('searchKeyword: ', req.body);
+        const { searchKeyword } = req.body;
+        searchWord = searchKeyword;
+        const url = 'https://openapi.naver.com/v1/search/shop.json?query=' + encodeURIComponent(searchKeyword);
+        const ClientID = process.env.NAVER_CLIENT_ID;
+        const ClientSecret = process.env.NAVER_CLIENT_SECRET;
+
         const result = await Product.findAll({
             where: {
-                productName: { 
-                    [Op.like]: `%${searchKeyword}%` 
-                }
+                productName: {
+                    [Op.like]: `%${searchKeyword}%`,
+                },
             },
-            order: [['productId','DESC']],
-        })
-        if(result.length){
-            res.send({
-                status: 'success',
-                data: {
-                    result
-                }
-            });
-        }else{
-            res.send({"message" : "해당 키워드에 맞는 상품이 존재하지 않습니다."})
+            order: [['productId', 'DESC']],
+        });
+
+        // 네이버에서 새상품 가격 받아오기
+        console.log("searchWord > ", searchWord);
+        
+        const newData = await getNproductPrice(searchWord);
+        console.log("newData > ",newData);
+        
+        if (result.length) {
+                res.send ({
+                    result: result,
+                    newData
+                });
+        
+        } else {
+            res.send({ message: '해당 키워드에 맞는 중고리스트가 존재하지 않습니다.' });
         }
     } catch (err) {
         res.status(500).json({ message: 'postSearch 서버 오류', err: err.message });
     }
-}
+};
 
 // 전체 상품 리스트 /product/list
 exports.getProductList = async (req, res) => {
     try {
         const product = await Product.findAll({
-            order : [['productId','DESC']],
-            raw : true,
+            order: [['productId', 'DESC']],
+            raw: true,
         });
-        // 좋아요 개수 불러오기
-        // const likes = await Likes.findOne({
-        //     where: {
-        //         productId,
-        //     },
-        //     attributes: [[sequelize.fn('SUM', sequelize.col('likesCount')), 'totalLike']],
-        //     raw: true
-        // });
-        // console.log("likes >> ", likes.totalLike);
-        // if (likes.totalLike) {
-        //     res.status(400).json({"totalLike" : likes.totalLike});
-        // } else {
-        //     res.send('해당 상품은 좋아요 개수가 조회되지 않습니다.');
-        // }
-        res.json(product);
-        console.log('전체 상품 리스트');
+        const likesCnt = await Likes.findAll({
+            order: [['productId', 'DESC']],
+            raw: true,
+        });
+        // console.log(likesCnt);
+        
+        res.send({
+            product,
+            likesCnt : likesCnt.likesCount
+        })
     } catch (err) {
         res.status(500).json({ message: 'getProductList 서버 오류', err: err.message });
     }
 };
 
 // 상품 상세 페이지
-// GET /product/read?productid=""
+// GET /product/read?productId=""
 exports.getProduct = async (req, res) => {
-    try {
+    try { 
         console.log('req.query > ', req.query);
+        //userId : req.session.id 
         const { productId, userId } = req.query;
         console.log('1개 상품 보기', productId);
         // 상품 정보 불러오기
         const product = await Product.findOne({
             where: { productId },
         });
-        // 좋아요 개수 불러오기
-        const likes = await Likes.findOne({
-            where: {
-                productId,
-            },
-            attributes: [[sequelize.fn('SUM', sequelize.col('likesCount')), 'totalLike']],
-            raw: true
-        });
-        console.log("likes >> ", likes.totalLike);
-        if (likes.totalLike) {
-            res.status(400).json({"totalLike" : likes.totalLike});
+        // 찜 개수 불러오기
+        const likeCnt = await getLikes(productId);
+        
+        // 신고 수 불러오기 
+        // const reportCnt = await getReport(productId,userId);
+
+        console.log("likes >> ", likeCnt);
+        if (likeCnt) {
+            res.send({
+                productId: product.productId,
+                productName: product.productName,
+                price: product.price,
+                content: product.content,
+                viewCount: product.viewCount,
+                status: product.status,
+                totalLikes: likeCnt
+            })
         } else {
             res.send('해당 상품은 좋아요 개수가 조회되지 않습니다.');
         }
-        res.json(product)
     } catch (err) {
-        res.status(500).json({ message: 'getProduct 서버 오류', err: err.message });
+        res.send('getProduct error')
+        // res.status(500).json({ message: 'getProduct 서버 오류', err: err.message });
     }
 };
 
@@ -119,11 +142,11 @@ exports.postProduct = async (req, res) => {
         } = req.body;
 
         // productId를 받기 위한 조회
-        const lastProductId = await Product.findOne({
-            order: [['createdAt', 'DESC']],
-            attributes: ['productId'],
-        });
-        console.log('lastProId >>>>>> ', lastProductId.productId + 1);
+        // const lastProductId = await Product.findOne({
+        //     order: [['createdAt', 'DESC']],
+        //     attributes: ['productId'],
+        // });
+        // console.log('lastProId >>>>>> ', lastProductId.productId + 1);
 
         const newSecHandProduct = await Product.create({
             productName,
@@ -250,15 +273,14 @@ exports.deleteProduct = async (req, res) => {
         console.log('req.body > ', req.query);
         const { productId } = req.query;
         const isDeleted = await Product.destroy({
-            where: { productId }
+            where: { productId },
         });
-        console.log("삭제완료 >> ",isDeleted);
-        if(isDeleted === 1){
-            res.send('삭제 성공 !🌟')
-        }else{
-            res.send('띠용!')
+        console.log('삭제완료 >> ', isDeleted);
+        if (isDeleted === 1) {
+            res.send('삭제 성공 !🌟');
+        } else {
+            res.send('띠용!');
         }
-        
     } catch (err) {
         res.status(500).json({ message: 'deleteProduct 서버 오류', err: err.message });
     }

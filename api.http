@@ -1,16 +1,42 @@
 @server = http://localhost:8000
-@productId = 8
+@productId = 1
 @userId = 1
 
+### 유저정보조회
 GET {{server}}/user/1
 
-POST {{server}}/user/2
+### 로그인
+POST {{server}}/login
+Content-Type: application/json ; charset=UTF-8
+
+{
+    "email":"user1@example.com",
+    "password":"User1!!12"
+}
+
+### 유저 추가하기
+POST {{server}}/user
+Content-Type: application/json ; charset=UTF-8
+
+{
+    "nickname": "user3",
+    "email": "user3@example.com",
+    "password": "User3!!12",
+    "gender": 1,  
+    "age": 30,
+    "money": 0,  
+    "point": 0,  
+    "profile_image": null,  
+    "depth1": "서울시",
+    "depth2": "영등포구",
+    "depth3": "문래동",
+    "depth4": "청년취업사관학교",
+    "isActive" : 1, 
+    "isAdmin" : 0 
+}
 
 ### 새상품 가격 받아오기
 GET {{server}}/product/search/api
-
-###
-GET https://openapi.naver.com/v1/search/shop.json?query=water
 
 ### 검색 버튼 클릭시
 POST {{server}}/product/search
@@ -31,10 +57,10 @@ POST {{server}}/product/write
 Content-Type: application/json ; charset=UTF-8
 
 {
-    "productName" : "노란 옷",
-    "userId": 1,
+    "productName" : "빨간 옷",
+    "userId": {{userId}},
     "price": 4000,
-    "content": "노란 옷 팔아요",
+    "content": "빨간 옷 팔아요",
     "categoryName1" : "여성패션",
     "categoryName2" : "의류",
     "categoryName3" : "상의"
@@ -60,10 +86,10 @@ Content-Type: application/json ; charset=UTF-8
 ### 특정 상품 삭제
 DELETE {{server}}/product/delete?productId={{productId}}
 
-### 좋아요 추가, 삭제 
+### 찜 전체 개수
 GET {{server}}/product/likes?productId={{productId}}
 
-### 좋아요 클릭시
+### 찜 클릭시
 POST {{server}}/product/likes?productId={{productId}}&userId={{userId}}
 Content-Type: application/json ; charset=UTF-8
 
