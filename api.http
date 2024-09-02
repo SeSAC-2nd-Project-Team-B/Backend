@@ -2,15 +2,41 @@
 @productId = 8
 @userId = 1
 
+### 유저정보조회
 GET {{server}}/user/1
 
+### 로그인
+POST {{server}}/login
+Content-Type: application/json ; charset=UTF-8
+
+{
+    "email":"abc@email.com",
+    "password":"1234"
+}
+
+### 유저 추가하기
 POST {{server}}/user/2
+Content-Type: application/json ; charset=UTF-8
+
+{
+    "nickname": "Hongildong123456",
+    "email": "Hongildong123456@example.com",
+    "password": "Hongildong!!12",
+    "gender": 1,  // 남자: 1, 여자: 0
+    "age": 30,
+    "money": 0,  // 초기값으로 설정
+    "point": 0,  // 초기값으로 설정
+    "profile_image": null,  // 아직 프로필 이미지 없음
+    "depth1": "서울시",
+    "depth2": "영등포구",
+    "depth3": "문래동",
+    "depth4": "청년취업사관학교",
+    "isActive" : 1, // 활동 정지 여부
+    "isAdmin" : 1 // 관리자
+}
 
 ### 새상품 가격 받아오기
 GET {{server}}/product/search/api
-
-###
-GET https://openapi.naver.com/v1/search/shop.json?query=water
 
 ### 검색 버튼 클릭시
 POST {{server}}/product/search
