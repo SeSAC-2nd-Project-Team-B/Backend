@@ -285,3 +285,13 @@ exports.deleteProduct = async (req, res) => {
         res.status(500).json({ message: 'deleteProduct 서버 오류', err: err.message });
     }
 };
+
+
+// 마이페이지 - 구매 리스트
+exports.getBuyList = async (req,res) => {
+    try {
+        
+    } catch (err) {
+        res.status(500).json({ message: 'getBuyList 서버 오류', err: err.message });
+    }
+}
