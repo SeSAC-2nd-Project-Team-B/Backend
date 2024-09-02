@@ -2,16 +2,18 @@ const express = require('express');
 const controller = require('../controller/product/Cproduct');
 const likesController = require('../service/likesService');
 const reportController = require('../service/reportService');
+const utilController = require('../utils/apiHandler');
 const router = express.Router();
 
 // 기본 요청 경로 localhost:PORT/product
+
+router.get('/search/api',utilController.getNproductPrice)
 
 // 검색 버튼 클릭시
 router.post('/search',controller.postSearch);
 
 // 전체 상품 리스트
 router.get('/list', controller.getProductList);
-
 
 // 상품 상세 페이지
 router.get('/read', controller.getProduct);
@@ -38,7 +40,6 @@ router.get('/likes', likesController.getLikes);
 router.post('/likes', likesController.postLikes);
 
 // 상품 페이지 - 신고 버튼 클릭시
-
 router.post('/report', reportController.postReportProduct);
 
 module.exports = router;
