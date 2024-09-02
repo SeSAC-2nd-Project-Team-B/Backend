@@ -6,12 +6,15 @@ const Rroom = require('./Rroom');
 const Rcoupon = require('./Rcoupon');
 const Rloginout = require('./Rloginout');
 const Rproduct = require('./Rproduct');
+const Rmessage = require('./Rmessage');
+
 
 router.use("/user", Ruser);
 router.use("/room", Rroom);
 router.use("/coupon", Rcoupon);
 router.use('/product',Rproduct);
 router.use("/", Rloginout);
+router.use('/messages', Rmessage);
 
 
 

@@ -15,13 +15,13 @@ const MessageModel = (sequelize, DataTypes) => {
             allowNull: false,
         },
 
-        // 보내는 사람 (구매자)
+        // 메세지 보내는 사람 식별 번호
         senderId: {
             type: DataTypes.BIGINT,
             allowNull: false,
         },
 
-        // 받는 사람 (판매자)
+        // 메세지 받는 사람 식별 번호
         receiverId: {
             type: DataTypes.BIGINT,
             allowNull: false,
@@ -33,9 +33,15 @@ const MessageModel = (sequelize, DataTypes) => {
             allowNull: false
         },
 
+        // // 메시지 확인 여부
+        // isRead: {
+        //     type: DataTypes.BOOLEAN,
+        //     allowNull: false,
+        //     defaultValue: false
+        // }
     }, 
         {
-            tableName: 'Messages',
+            tableName: 'Message',
             freezeTableName: true,
             timestamps: true,
         }
