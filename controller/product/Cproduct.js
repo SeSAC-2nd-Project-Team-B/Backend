@@ -1,4 +1,33 @@
+const Op = require('sequelize').Op;
 const { Product, ProductImage, Category, NewProduct, Review, Likes, Report } = require('../../models/Index');
+
+// 검색 버튼 클릭시
+exports.postSearch = async (req,res) => {
+    try {
+        console.log("searchKeyword: ",req.body);
+        const {searchKeyword} = req.body;
+        const result = await Product.findAll({
+            where: {
+                productName: { 
+                    [Op.like]: `%${searchKeyword}%` 
+                }
+            },
+            order: [['productId','DESC']],
+        })
+        if(result.length){
+            res.send({
+                status: 'success',
+                data: {
+                    result
+                }
+            });
+        }else{
+            res.send({"message" : "해당 키워드에 맞는 상품이 존재하지 않습니다."})
+        }
+    } catch (err) {
+        res.status(500).json({ message: 'postSearch 서버 오류', err: err.message });
+    }
+}
 
 // 전체 상품 리스트 /product/list
 exports.getProductList = async (req, res) => {
@@ -6,9 +35,21 @@ exports.getProductList = async (req, res) => {
         const product = await Product.findAll({
             order : [['productId','DESC']],
             raw : true,
-            limit: 10,
-            // offset: (page - 1) * 10,
         });
+        // 좋아요 개수 불러오기
+        // const likes = await Likes.findOne({
+        //     where: {
+        //         productId,
+        //     },
+        //     attributes: [[sequelize.fn('SUM', sequelize.col('likesCount')), 'totalLike']],
+        //     raw: true
+        // });
+        // console.log("likes >> ", likes.totalLike);
+        // if (likes.totalLike) {
+        //     res.status(400).json({"totalLike" : likes.totalLike});
+        // } else {
+        //     res.send('해당 상품은 좋아요 개수가 조회되지 않습니다.');
+        // }
         res.json(product);
         console.log('전체 상품 리스트');
     } catch (err) {
@@ -23,17 +64,24 @@ exports.getProduct = async (req, res) => {
         console.log('req.query > ', req.query);
         const { productId, userId } = req.query;
         console.log('1개 상품 보기', productId);
+        // 상품 정보 불러오기
         const product = await Product.findOne({
             where: { productId },
         });
+        // 좋아요 개수 불러오기
         const likes = await Likes.findOne({
-            where: { 
+            where: {
                 productId,
-                userId 
             },
+            attributes: [[sequelize.fn('SUM', sequelize.col('likesCount')), 'totalLike']],
+            raw: true
         });
-        // const likesCount = likes.likesCount; //좋아요 개수
-        // res.json(likesCount);
+        console.log("likes >> ", likes.totalLike);
+        if (likes.totalLike) {
+            res.status(400).json({"totalLike" : likes.totalLike});
+        } else {
+            res.send('해당 상품은 좋아요 개수가 조회되지 않습니다.');
+        }
         res.json(product)
     } catch (err) {
         res.status(500).json({ message: 'getProduct 서버 오류', err: err.message });
