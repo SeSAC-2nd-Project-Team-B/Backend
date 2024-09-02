@@ -4,6 +4,7 @@ const { Op } = require('sequelize');
 const encUtil = require("../../utils/encrypt");
 const locationService = require('../../service/locationService');
 const activeService = require('../../service/activeService');
+const auth = require("../../middleware/auth")
 
 // 유저 생성 // 회원가입
 exports.postUser = async(req, res) => {
@@ -161,6 +162,27 @@ exports.deleteUser = async (req, res) => {
     }
   };
 
+
+
+// 토큰으로 유저 조회
+exports.getUserByToken = async (req, res) => {
+    try {
+      const userInfo = await auth.getUserInfoByToken(req, res);
+      console.log("🚀 ~ exports.getUserByToken= ~ userInfo:", userInfo);
+      if (!userInfo) return;
+  
+      const { userId } = userInfo;
+      console.log("🚀 ~ exports.getUserByToken= ~ userId:", userId);
+  
+      const user = await User.findOne({ where: { userId } });
+      if (!user) return res.status(404).json({ message: '회원을 찾을 수 없습니다.' });
+  
+      return res.status(200).json(user);
+    } catch (err) {
+      console.log(err.message);
+      res.status(500).json({ message: '서버 오류', err: err.message });
+    }
+  }
 
   // 조회 시 포함 정보 // 중복 삭제
   const includeData = {

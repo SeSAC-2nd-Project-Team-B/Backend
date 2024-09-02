@@ -8,12 +8,19 @@ const controller = require(`../controller/user/Croom`);
 router.post(`/`, controller.postRoom);
 
 // 특정 채팅방 한개 조회
-router.get(`/:roomId`, controller.getRoom);
+// router.get(`/:roomId`, controller.getRoom);
+
+// 채팅방 전체 목록 조회
+// router.get(`/list`, controller.getRoomList);
+
+// 특정 유저의 채팅방 목록 조회 (토큰)
+router.post(`/list`, controller.getRoomByToken);
 
 // 특정 유저의 채팅방 목록 조회
-router.get(`/:userId`, controller.getRoomListByUserId);
+router.get(`/list/:userId`, controller.getRoomListByUserId);
+
 
 // 특정 채팅방 삭제
-router.delete(`/:roomId`, controller.deleteRoom);
+// router.delete(`/:roomId`, controller.deleteRoom);
 
 module.exports = router;

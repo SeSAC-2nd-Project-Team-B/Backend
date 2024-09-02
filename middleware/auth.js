@@ -37,6 +37,41 @@ exports.createToken = (sessionID) => {
   );
 };
 
+// 토큰에서 userId 확인
+exports.getUserInfoByToken = (req, res) => {
+  return new Promise((resolve, reject) => {
+    console.log('11111');
+
+    const { token } = req.body;
+    console.log("🚀 ~ token:", token);
+
+    try {
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      const sessionId = decoded.sessionID;
+      console.log("🚀 ~ sessionId:", sessionId);
+
+      // Express 메모리 세션 스토어에서 세션 데이터 가져오기 // 비동기
+      req.sessionStore.get(sessionId, (err, session) => {
+        if (err || !session) {
+          res.status(401).json({ message: "세션이 유효하지 않습니다." });
+          return reject(new Error("세션이 유효하지 않습니다."));
+        }
+
+        const { userId, isAdmin } = session;
+        console.log("🚀 ~ req.sessionStore.get ~ userId, isAdmin:", userId, isAdmin);
+
+        req.userId = userId;
+        req.isAdmin = isAdmin;
+
+        resolve({ userId, isAdmin });
+      });
+
+    } catch (err) {
+      res.status(401).json({ message: "유효하지 않은 토큰입니다." });
+      reject(new Error("유효하지 않은 토큰입니다."));
+    }
+  });
+}
 
 const admin = "admin";
 const adminOrUser = "adminOrUser";
