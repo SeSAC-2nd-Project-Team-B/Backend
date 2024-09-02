@@ -78,12 +78,13 @@
         // 상품 정보 가져오기 버튼 클릭
         document.getElementById('fetch-product-button').onclick = async () => {
             productId = document.getElementById('product-id-input').value;
+            console.log("🚀 ~ document.getElementById ~ productId:", productId)
 
             if (!productId) {
                 alert("상품 ID를 입력하세요.");
                 return;
             }
-
+            console.log(productId);
             try {
                 const response = await fetch(`/product/${productId}`, {
                     method: 'GET'
@@ -113,6 +114,7 @@
                     },
                     body: JSON.stringify({ senderId, receiverId, productId })
                 });
+                console.log("🚀 ~ document.getElementById ~ response:", response)
 
                 if (response.ok) {
                     const data = await response.json();
@@ -139,6 +141,7 @@
 
             try {
                 const response = await fetch('/room/list', {
+                    
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -156,9 +159,15 @@
                             const listItem = document.createElement('li');
                             listItem.textContent = `방 ID: ${room.roomId}, 상품 ID: ${room.productId}`;
                             listItem.onclick = () => {
+                                
                                 roomId = room.roomId;
+                                console.log("🚀 ~ document.getElementById ~ roomId:", roomId)
+                                senderId = userId;
+                                console.log("🚀 ~ document.getElementById ~ senderId:", senderId)
                                 productId = room.productId;
+                                console.log("🚀 ~ document.getElementById ~ productId:", productId)
                                 receiverId = room.receiverId;
+                                console.log("🚀 ~ document.getElementById ~ receiverId:", receiverId)
                                 startChat(roomId);
                             };
                             roomList.appendChild(listItem);

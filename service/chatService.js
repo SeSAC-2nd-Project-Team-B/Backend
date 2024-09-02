@@ -21,13 +21,15 @@ exports.createOrGetRoom = async ({ productId, senderId, receiverId }) => {
                 where: { productId, senderId, receiverId }
                 
             });
+            console.log("🚀 ~ exports.createOrGetRoom= ~ room:", room)
             
-            if (room) {
-                console.log(`기존 방이 존재하므로 해당 방으로 접속합니다. roomId: ${room.roomId}`);
-            } else {
+            if (!room) {
                 // 없으면 생성
                 room = await Room.create({ productId, senderId, receiverId });
                 console.log(`방이 존재하지 않으므로 새로운 방을 생성합니다. roomId: ${room.roomId}`);
+            } else {
+                console.log("🚀 ~ exports.createOrGetRoom= ~ room:", room)
+                console.log(`기존 방이 존재하므로 해당 방으로 접속합니다. roomId: ${room.roomId}`);
             }
 
             return room;
