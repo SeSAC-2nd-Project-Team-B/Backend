@@ -6,6 +6,9 @@ const { Op } = require("sequelize");
 // 채팅방 생성
 exports.postRoom = async (req, res) => {
     const { productId, buyerId, sellerId } = req.body;
+
+    if (buyerId === sellerId) return res.status(401).json({ message: '해당 상품은 본인이 판매자인 상품입니다.'})
+
     console.log("🚀 ~ exports.postRoom= ~ req.body:", req.body)
     console.log("🚀 ~ exports.postRoom= ~ productId, buyerId, sellerId:", productId, buyerId, sellerId)
     

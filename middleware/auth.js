@@ -53,7 +53,6 @@ exports.getUserInfoByToken = (req, res) => {
       // Express 메모리 세션 스토어에서 세션 데이터 가져오기 // 비동기
       req.sessionStore.get(sessionId, (err, session) => {
         if (err || !session) {
-          res.status(401).json({ message: "세션이 유효하지 않습니다." });
           return reject(new Error("세션이 유효하지 않습니다."));
         }
 
@@ -67,11 +66,13 @@ exports.getUserInfoByToken = (req, res) => {
       });
 
     } catch (err) {
-      res.status(401).json({ message: "유효하지 않은 토큰입니다." });
-      reject(new Error("유효하지 않은 토큰입니다."));
+      return reject(new Error("유효하지 않은 토큰입니다."));
     }
   });
 }
+
+
+
 
 const admin = "admin";
 const adminOrUser = "adminOrUser";

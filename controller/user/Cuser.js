@@ -168,6 +168,10 @@ exports.deleteUser = async (req, res) => {
 exports.getUserByToken = async (req, res) => {
     try {
       const userInfo = await auth.getUserInfoByToken(req, res);
+      if (!userInfo) {
+        return res.status(401).json({ message: '토큰이나 세션이 유효하지 않습니다.' });
+      }
+      
       console.log("🚀 ~ exports.getUserByToken= ~ userInfo:", userInfo);
       if (!userInfo) return;
   

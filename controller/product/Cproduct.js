@@ -85,26 +85,27 @@ exports.getProduct = async (req, res) => {
         const product = await Product.findOne({
             where: { productId },
         });
-        // 찜 개수 불러오기
-        const likeCnt = await getLikes(productId);
+        // // 찜 개수 불러오기
+        // const likeCnt = await getLikes(productId);
         
-        // 신고 수 불러오기 
-        // const reportCnt = await getReport(productId,userId);
+        // // 신고 수 불러오기 
+        // // const reportCnt = await getReport(productId,userId);
 
-        console.log("likes >> ", likeCnt);
-        if (likeCnt) {
-            res.send({
-                productId: product.productId,
-                productName: product.productName,
-                price: product.price,
-                content: product.content,
-                viewCount: product.viewCount,
-                status: product.status,
-                totalLikes: likeCnt
-            })
-        } else {
-            res.send('해당 상품은 좋아요 개수가 조회되지 않습니다.');
-        }
+        // console.log("likes >> ", likeCnt);
+        // if (likeCnt) {
+        //     res.send({
+        //         productId: product.productId,
+        //         productName: product.productName,
+        //         price: product.price,
+        //         content: product.content,
+        //         viewCount: product.viewCount,
+        //         status: product.status,
+        //         totalLikes: likeCnt
+        //     })
+        // } else {
+        //     res.send('해당 상품은 좋아요 개수가 조회되지 않습니다.');
+        // }
+        return res.status(200).json(product)
     } catch (err) {
         res.send('getProduct error')
         // res.status(500).json({ message: 'getProduct 서버 오류', err: err.message });
