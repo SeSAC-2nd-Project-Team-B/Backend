@@ -12,16 +12,12 @@ exports.getLikes = async (req, res) => {
             attributes: [[sequelize.fn('SUM', sequelize.col('likesCount')), 'totalLike']],
             raw: true
         });
-        const likeCnt = likes.totalLike;
-        console.log('likeCnt' > likeCnt);
+        console.log("> ", likes.totalLike);
         
-        return likes ? likeCnt : 0 ;
+        var likeCnt = likes.totalLike ? likes.totalLike : 0 ;
+        console.log('likeCnt' > likeCnt);
+        return likeCnt 
 
-        // if (likeCnt) {
-        //     return likeCnt;
-        // } else {
-        //     return '해당 상품은 좋아요 개수가 조회되지 않습니다.';
-        // }
     } catch (err) {
         return `message: 'getLikes 서버 오류', err: ${err.message} `
     }

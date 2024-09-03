@@ -42,4 +42,7 @@ router.post('/likes', likesController.postLikes);
 // 상품 페이지 - 신고 버튼 클릭시
 router.post('/report', reportController.postReportProduct);
 
+// 안전거래 버튼 클릭시
+router.post('/order', controller.postOrder);
+
 module.exports = router;
