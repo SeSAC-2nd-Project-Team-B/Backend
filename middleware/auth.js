@@ -33,11 +33,13 @@ exports.createToken = (sessionID) => {
   return jwt.sign(
     { sessionID },
     process.env.JWT_SECRET,
-    { expiresIn: '3d' }
+    { expiresIn: '1d' }
   );
 };
 
-// 토큰에서 userId 확인
+
+
+// 토큰에서 userId 확인 (디버깅용)
 exports.getUserInfoByToken = (req, res) => {
   return new Promise((resolve, reject) => {
     console.log('11111');
@@ -53,7 +55,6 @@ exports.getUserInfoByToken = (req, res) => {
       // Express 메모리 세션 스토어에서 세션 데이터 가져오기 // 비동기
       req.sessionStore.get(sessionId, (err, session) => {
         if (err || !session) {
-          res.status(401).json({ message: "세션이 유효하지 않습니다." });
           return reject(new Error("세션이 유효하지 않습니다."));
         }
 
@@ -67,16 +68,16 @@ exports.getUserInfoByToken = (req, res) => {
       });
 
     } catch (err) {
-      res.status(401).json({ message: "유효하지 않은 토큰입니다." });
-      reject(new Error("유효하지 않은 토큰입니다."));
+      return reject(new Error("유효하지 않은 토큰입니다."));
     }
   });
 }
 
+
+// 유저 본인 또는 관리자인지 확인
 const admin = "admin";
 const adminOrUser = "adminOrUser";
 
-// 유저 본인 또는 관리자인지 확인
 exports.authenticate = (accessType) => {
   
   return (req, res, next) => {
@@ -106,8 +107,23 @@ exports.authenticate = (accessType) => {
         return res.status(401).json({ message: "사용자 정보가 세션에 없습니다." });
       }
 
-      // 본인 또는 관리자 접근 가능한 경우
-      if (accessType === adminOrUser && userId !== parseInt(req.params.userId, 10) && !isAdmin) {
+      /**
+       * 관리자: 모든 경우 접근 허용
+       * 사용자: 본인의 것만 접근 허용
+       * 
+       * 본인 또는 관리자 접근 가능한 경우 
+       * - decoded한 세션값과 조회하고자하는 파라미터를 비교하여 조회하고자 하는 것이 본인의 것인지 확인
+       * - 만약 파라미터가 없는 경우 (ex.postRoom) 해당 코드 내에서 세션값과 body값 직접 비교
+       * 
+       * 관리자만 접근 가능한 경우
+       * - decode한 세션값에서 관리자권한이 있는 지 확인 후 권한이 있다면 모든 접근 허용
+       * - 파라미터가 있다면 해당코드에서 파라미터 기준으로 코드 실행, 권한만 관리자일 뿐
+       * - 만약 해당 코드에서 파라미터가 아닌 userId를 넣게 되면,
+       * - 관리자 본인의 userId로 실행되므로 의도한 바와 다른 결과가 도출됨
+       */
+
+      // 본인 또는 관리자 접근 가능한 경우 (파라미터가 있는 경우, 세션과 파라미터 비교)
+      if (accessType === adminOrUser && req.params.userId && userId !== parseInt(req.params.userId, 10) && !isAdmin) {
         return res.status(403).json({ message: "접근 권한이 없습니다." });
       }
       
