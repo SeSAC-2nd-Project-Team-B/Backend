@@ -11,7 +11,7 @@ exports.postMoney = async(req, res) => {
         await Active.findOne({ where: { userId }});
 
         // 활동 정지 여부 체크
-        checkActive(userId);
+        await checkActive(userId);
 
         const chargeMoney = await User.update(
             { money: db.sequelize.literal(`money + ${money}`) }, 
