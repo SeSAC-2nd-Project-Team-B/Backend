@@ -47,7 +47,8 @@ exports.postSearch = async (req, res) => {
             res.send({ message: '해당 키워드에 맞는 중고리스트가 존재하지 않습니다.' });
         }
     } catch (err) {
-        res.status(500).json({ message: 'postSearch 서버 오류', err: err.message });
+        console.log('error : ',err)
+        // res.status(500).json({ message: 'postSearch 서버 오류', err: err.message });
     }
 };
 
@@ -59,14 +60,16 @@ exports.getProductList = async (req, res) => {
             raw: true,
         });
         const likesCnt = await Likes.findAll({
-            order: [['productId', 'DESC']],
+
+            attributes: ['productId', [sequelize.fn('SUM', sequelize.col('likesCount')), 'totalLike']],
+            group: ['productId'],
             raw: true,
         });
-        // console.log(likesCnt);
+        console.log(likesCnt);
         
         res.send({
             product,
-            likesCnt : likesCnt.likesCount
+            likesCnt : likesCnt
         })
     } catch (err) {
         res.status(500).json({ message: 'getProductList 서버 오류', err: err.message });
@@ -106,8 +109,8 @@ exports.getProduct = async (req, res) => {
             res.send('해당 상품은 좋아요 개수가 조회되지 않습니다.');
         }
     } catch (err) {
-        res.send('getProduct error')
-        // res.status(500).json({ message: 'getProduct 서버 오류', err: err.message });
+        // res.send('getProduct error')
+        res.status(500).json({ message: 'getProduct 서버 오류', err: err.message });
     }
 };
 
@@ -285,3 +288,13 @@ exports.deleteProduct = async (req, res) => {
         res.status(500).json({ message: 'deleteProduct 서버 오류', err: err.message });
     }
 };
+
+
+// 마이페이지 - 구매 리스트
+exports.getBuyList = async (req,res) => {
+    try {
+        
+    } catch (err) {
+        res.status(500).json({ message: 'getBuyList 서버 오류', err: err.message });
+    }
+}

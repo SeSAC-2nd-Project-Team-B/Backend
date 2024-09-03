@@ -9,7 +9,6 @@ dotenv.config();
 exports.getNproductPrice = async (req, res) => {
 
     const query = req;
-    console.log('query > ',query);
     
     const url = 'https://openapi.naver.com/v1/search/shop.json?query=' + encodeURIComponent(query);
     const ClientID = process.env.NAVER_CLIENT_ID;
@@ -49,7 +48,7 @@ exports.getNproductPrice = async (req, res) => {
         return '해당 키워드로 검색된 상품의 최저가 정보가 없습니다.😥';
       }
     } catch (err) {
-      res.status(500).json({ error: err.message });
+      return `error : ${err.message}`
 
     }
   };

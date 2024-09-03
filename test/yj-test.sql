@@ -45,4 +45,22 @@ select * from likes;
 insert into likes values(3,8,1,0,now(),now());
 update likes set likesid=1 where productId=8;
 
-SELECT COUNT(`likesCount`) AS `totalLike` FROM `Likes` AS `Likes` WHERE `Likes`.`productId` = '8' LIMIT 1;
+drop table category;
+drop table messages;
+drop table message;
+drop table room;
+drop table review;
+drop table report;
+drop table likes;
+drop table sesac_project_2.like;
+drop table usercoupon;
+drop table producthashtag;
+drop table productimage;
+drop table newproduct;
+drop table location;
+
+drop table coupon;
+drop table active;
+drop table product;
+drop table user;
+
