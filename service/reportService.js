@@ -50,3 +50,23 @@ exports.postReportProduct = async (req, res) => {
         return res.status(500).json({ message: 'postReportProduct 서버 오류', err: err.message });
     }
 }
+
+
+// 특정 유저의 신고 수 합산
+exports.getReportCountByUserId = async (userId) => {
+
+    const products = await Product.findAll({ where: { userId } });
+    
+    if (products.length === 0) {
+        console.log("등록된 상품이 없습니다.");
+        return 0;
+    }
+    
+    let userReportCount = 0;
+    for (const product of products) {
+        const reportCount = await Report.count({ where: { productId: product.productId } });
+        userReportCount += reportCount;
+    }
+    
+    return userReportCount;
+}
