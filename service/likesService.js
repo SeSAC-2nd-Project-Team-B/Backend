@@ -13,6 +13,8 @@ exports.getLikes = async (req, res) => {
             raw: true
         });
         const likeCnt = likes.totalLike;
+        console.log('likeCnt' > likeCnt);
+        
         return likes ? likeCnt : 0 ;
 
         // if (likeCnt) {
@@ -21,7 +23,7 @@ exports.getLikes = async (req, res) => {
         //     return '해당 상품은 좋아요 개수가 조회되지 않습니다.';
         // }
     } catch (err) {
-        res.status(500).json({ message: 'getLikes 서버 오류', err: err.message });
+        return `message: 'getLikes 서버 오류', err: ${err.message} `
     }
 };
 
