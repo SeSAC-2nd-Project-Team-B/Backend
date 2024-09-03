@@ -1,9 +1,8 @@
 const { Room, Message, Product } = require("../models/Index");
 
 exports.createOrGetRoom = async ({ productId, buyerId, sellerId }) => {
-        
-    console.log("사용자가 연결되었습니다.");
 
+    console.log("채팅방 생성을 위해 준비 중입니다.");
 
     if (productId !== undefined && buyerId !== undefined && sellerId !== undefined) {
         console.log("🚀 ~ exports.1createOrGetRoom= ~ productId, buyerId, sellerId:", productId, buyerId, sellerId)
@@ -31,6 +30,8 @@ exports.createOrGetRoom = async ({ productId, buyerId, sellerId }) => {
                 console.log("🚀 ~ exports.createOrGetRoom= ~ room:", room)
                 console.log(`기존 방이 존재하므로 해당 방으로 접속합니다. roomId: ${room.roomId}`);
             }
+
+            console.log("사용자가 연결되었습니다.");
 
             return room;
 

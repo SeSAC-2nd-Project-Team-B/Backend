@@ -1,6 +1,7 @@
 const chatService = require("../../service/chatService");
 const { User, Message } = require("../../models/Index");
 
+// 메세지 생성
 exports.sendMessage = async (io, roomId, senderId, messageText) => {
     try {
         const message = await chatService.createMessage({ roomId, senderId, messageText });
@@ -35,7 +36,7 @@ exports.sendMessage = async (io, roomId, senderId, messageText) => {
 };
 
 
-
+// 채팅방에 속한 메시지 조회
 exports.getMessagesByRoomId = async (req, res) => {
     const roomId = req.params.roomId;
 
