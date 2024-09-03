@@ -4,8 +4,8 @@ const { User, Product, ProductImage, Likes, Report } = require('../../models/Ind
 const { getLikes, postLikes } = require('../../service/likesService');
 const { getReport, postReportProduct } = require('../../service/reportService');
 
-// 구매 및 판매 내역
-exports.buySellList = async (req, res) => {
+// 구매 및 판매 및 찜 내역
+exports.buySellLikesList = async (req, res) => {
     try {
         // const userId = req.session.userId;
         const userId = 1;
@@ -13,24 +13,44 @@ exports.buySellList = async (req, res) => {
 
         var { mypageList } = req.body;
         var findCol = (mypageList === "buy") ? 'buyerId'
-            : (mypageList === "sell") ? 'userId'
-                : 'nono';
+            : (mypageList === "sell" || mypageList === "likes") ? 'userId'
+            : 'nono';
 
         console.log("mypageList > ", mypageList, findCol)
-        if (findCol == 'nono') res.send('잘못된 인자값').end();
-        const result = await Product.findAll({
+        if (findCol == 'nono') res.send('잘못된 인자값'); 
+        if(mypageList === 'buy' || mypageList === 'sell')    {
+        var result = await Product.findAll({
             where: {
                 [findCol]: userId
             },
             order: [['productId', 'DESC']],
         });
         if (result.length === 0) {
-            res.send('내역이 존재하지 않습니다.')
+            console.log('내역이 존재하지 않습니다.')
         } else {
             res.send(result);
         }
+        
         console.log('length >> ', result.length);
-
+    }else if(mypageList === 'likes'){
+        const pInfo = await Likes.findAll(
+            {
+                include: [{
+                    model: Product,
+                    attributes: ['productId','productName','price','status'],
+                    where: {
+                        userId
+                    }
+                }],
+            });        
+        console.log("pinfo > ",pInfo.map(item => item.Product));
+        
+        if (pInfo.length === 0) {
+            res.send('좋아요 내역이 존재하지 않습니다.')
+        } else {
+            res.send(pInfo.map(item => item.Product));
+        }
+    }
     } catch (err) {
         res.status(500).json({ message: 'getBuyList 서버 오류', err: err.message });
     }

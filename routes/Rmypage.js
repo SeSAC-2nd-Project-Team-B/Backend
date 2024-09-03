@@ -10,7 +10,7 @@ const router = express.Router();
 
 // 구매 및 판매 내역
 // router.post('/', authenticate(adminOrUser), controller.getBuyList)
-router.post('/', controller.buySellList);
+router.post('/', controller.buySellLikesList);
 
 // 판매 내역 - 상품 판매 수락/거절/발송완료
 router.post('/issell', controller.postSellCheck);

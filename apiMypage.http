@@ -8,12 +8,12 @@
 ### 마이페이지
 GET {{server}}/mypage
 
-### 마이페이지 - 구매/판매 내역
+### 마이페이지 - 구매/판매/찜 내역
 POST {{server}}/mypage
 Content-Type: application/json ; charset=UTF-8
 
 {
-    "mypageList": "sell"
+    "mypageList": "likes"
 }
 
 ### 판매 내역 - 상품 수락/거절/발송완료

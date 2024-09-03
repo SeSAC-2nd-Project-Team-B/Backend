@@ -1,5 +1,5 @@
 @server = http://localhost:8000
-@productId = 4
+@productId = 2
 
 #로그인한 유저
 @userId = 1 
