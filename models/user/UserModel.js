@@ -85,8 +85,10 @@ const UserModel = (sequelize, DataTypes) => {
         User.hasMany(models.Report, { foreignKey: 'userId' }); // 일대다 : 각 유저는 여러개의 신고
         User.hasMany(models.Location, { foreignKey: 'userId'}); // 일대다 : 각 유저는 여러개의 위치
         User.hasOne(models.Active, { foreignKey: 'userId' }); // 일대일: 각 유저는 하나의 Active
-
         User.hasMany(models.Product, { foreignKey: 'buyerId' }); // 일대다 : 각 유저는 여러개의 상품 구매가능
+
+        User.hasMany(models.Review, { foreignKey: 'buyerId', as: 'BuyerReview' }); // 일대다 : 각 유저는 여러개의 리뷰
+        User.hasMany(models.Review, { foreignKey: 'sellerId', as: 'SellerReview' }); // 일대다 : 각 유저는 여러개의 리뷰
       };
 
     return User;

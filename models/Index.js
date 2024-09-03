@@ -21,12 +21,12 @@ const Message = require("./user/MessageModel")(sequelize, Sequelize);
 const Room = require("./user/RoomModel")(sequelize, Sequelize);
 const UserCoupon = require("./user/UserCouponModel")(sequelize, Sequelize);
 const User = require("./user/UserModel")(sequelize, Sequelize);
+const Review = require('./user/ReviewModel')(sequelize,Sequelize);
 
 const Product = require('./product/ProductModel')(sequelize,Sequelize);
 const ProductImage = require('./product/ProductImageModel')(sequelize,Sequelize);
 const NewProduct = require('./product/NewProductModel')(sequelize,Sequelize);
 const Category = require('./product/CategoryModel')(sequelize,Sequelize);
-const Review = require('./product/ReviewModel')(sequelize,Sequelize);
 const Likes = require('./product/LikesModel')(sequelize,Sequelize);
 const Report = require('./product/ReportModel')(sequelize,Sequelize);
 const ProductHashtag = require('./product/ProductHashtagModel')(sequelize,Sequelize);
@@ -57,6 +57,7 @@ const syncModels = async () => {
   await Room.sync();
   await UserCoupon.sync();
   await User.sync();
+  await Review.sync();
 
   await Product.sync();
   await ProductImage.sync();

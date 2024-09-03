@@ -5,6 +5,7 @@ const encUtil = require("../../utils/encrypt");
 const locationService = require('../../service/locationService');
 const activeService = require('../../service/activeService');
 const auth = require("../../middleware/auth")
+const reportService = require("../../service/reportService");
 
 // 유저 생성 // 회원가입
 exports.postUser = async(req, res) => {
@@ -56,7 +57,7 @@ exports.getUserList = async(req, res) => {
             const exactMatches = users.filter(user => user.nickname === nickname);
             const partialMatches = users.filter(user => user.nickname !== nickname);
             users = [...exactMatches, ...partialMatches];
-
+            
         } else {
             // 닉네임이 주어지지 않은 경우 (전체 검색)
             users = await User.findAll({
@@ -66,8 +67,16 @@ exports.getUserList = async(req, res) => {
 
         if (users.length === 0) return res.status(404).json({ message: '일치하는 회원이 없습니다.' });
         
+        // 각 유저에 대해 신고 수 계산
+        const usersWithReportCount = [];
+        for (const user of users) {
+            const userReportCount = await reportService.getReportCountByUserId(user.userId);
 
-        res.status(200).json({ totalUsers: users.length, users: users });
+            // userReportCount 항목을 스프레드 연산자로 user에 산입하여 usersWithReportCounts에 push
+            usersWithReportCount.push({ ...user.toJSON(), userReportCount });
+        }
+
+        res.status(200).json({ totalUsers: usersWithReportCount.length, users: usersWithReportCount });
 
     } catch(err) {
         console.log(err.message);
@@ -89,7 +98,10 @@ exports.getUser = async (req, res) => {
 
         if (!user) return res.status(404).json({ message: '회원을 찾을 수 없습니다.' });
 
-        return res.status(200).json(user);
+        const userReportCount = await reportService.getReportCountByUserId(userId);
+        
+        // userReportCount 항목을 스프레드 연산자로 user에 산입
+        return res.status(200).json({ ...user.toJSON(), userReportCount });
         
     } catch (err) {
         console.log(err.message);
