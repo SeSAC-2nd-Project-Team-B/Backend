@@ -7,10 +7,10 @@ const router = express.Router();
 
 // 기본 요청 경로 localhost:PORT/product
 
-router.get('/search/api',utilController.getNproductPrice)
+router.get('/search/api', utilController.getNproductPrice);
 
 // 검색 버튼 클릭시
-router.post('/search',controller.postSearch);
+router.post('/search', controller.postSearch);
 
 // 전체 상품 리스트
 router.get('/list', controller.getProductList);
@@ -18,13 +18,13 @@ router.get('/list', controller.getProductList);
 // 상품 상세 페이지
 router.get('/read', controller.getProduct);
 
-// 상품 작성 페이지 
+// 상품 작성 페이지
 router.get('/write', controller.getProductWrite);
 
 // 상품 등록 버튼 클릭시
 router.post('/write', controller.postProduct);
 
-// 특정 상품 수정 페이지 
+// 특정 상품 수정 페이지
 router.get('/update', controller.getProductUpdate);
 
 // 특정 상품 수정 버튼 클릭시
@@ -43,6 +43,6 @@ router.post('/likes', likesController.postLikes);
 router.post('/report', reportController.postReportProduct);
 
 // 안전거래 버튼 클릭시
-router.post('/order', controller.postOrder);
+router.get('/order', controller.postOrder);
 
 module.exports = router;
