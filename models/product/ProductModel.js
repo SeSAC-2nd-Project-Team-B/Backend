@@ -42,6 +42,10 @@ const ProductModel = (sequelize, DataTypes) =>{
             allowNull : false,
             defaultValue:"판매중"
         },
+        buyerId:{
+            type:DataTypes.BIGINT,
+            allowNull : true,
+        },
     },
     {
         freezeTableName : true, 
@@ -50,6 +54,7 @@ const ProductModel = (sequelize, DataTypes) =>{
 );
     return Product;
     Product.associate = function (models) {
+        Product.belongsTo(models.User, {foreignKey:'userId'});
         Product.belongsTo(models.User, {foreignKey:'userId'});
         Product.hasMany(models.ProductHashtag, {foreignKey: 'productId'});
         Product.hasOne(models.ProductImage, {foreignKey: 'productId'});

@@ -21,38 +21,42 @@ drop table category;
 desc category;
 select * from category;
 
-insert into product values(1,"물",1,10000,"물 팔아요",0,"판매중",now(),now());
+insert into product values(1,"물",1,10000,"물 팔아요",0,"판매중",null,now(),now());
 SELECT `productId`, `productName`, `userId`, `price`, `content`, `viewCount`, 
 `status`, `createdAt`, `updatedAt` FROM `Product` AS `Product` 
 ORDER BY `Product`.`createdAt` DESC LIMIT 1;
 
+select * from user;
+select * from product order by productId desc;
+update user set money=10000 where userId=2;
+select * from likes;
+desc user;
+desc product;
 
-select * from product order by createdAt DESC;
+update product set buyerId=2 where productId=3;
 delete from product where productId=1;
+alter table product drop column buyerId;
+alter table product add column buyerId BIGINT;
+alter table product add foreign key(buyerId) references user(userId);
 
-select * from category;
 use sesac_project_2;
 drop table likes;
 
 desc likes;
 desc report;
 
-select * from user;
-select * from likes;
-
-
+SELECT `User`.*, `Products`.`productId` AS `Products.productId`, `Products`.`buyerId` AS `Products.buyerId`, `Products`.`price` AS `Products.price` FROM (SELECT `User`.`userId`, `User`.`money` FROM `User` AS `User` WHERE ( SELECT `buyerId` FROM `Product` AS `Products` WHERE (`Products`.`userId` = 1 AND `Products`.`buyerId` = `User`.`userId`) LIMIT 1 ) IS NOT NULL LIMIT 1) AS `User` INNER JOIN 
+`Product` AS `Products` ON `User`.`userId` = `Products`.`buyerId` AND `Products`.`userId` = 1;
 
 insert into likes values(3,8,1,0,now(),now());
 update likes set likesid=1 where productId=8;
 
 drop table category;
-drop table messages;
 drop table message;
 drop table room;
 drop table review;
 drop table report;
 drop table likes;
-drop table sesac_project_2.like;
 drop table usercoupon;
 drop table producthashtag;
 drop table productimage;

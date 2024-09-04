@@ -1,6 +1,8 @@
 @server = http://localhost:8000
-@productId = 3
-@userId = 2
+@productId = 2
+
+#로그인한 유저
+@userId = 1 
 
 ### 유저정보조회
 GET {{server}}/user/1
@@ -10,7 +12,7 @@ POST {{server}}/login
 Content-Type: application/json ; charset=UTF-8
 
 {
-    "email":"user1@example.com",
+    "email":"user2@example.com",
     "password":"Userr!!12"
 }
 
@@ -19,7 +21,7 @@ POST {{server}}/user
 Content-Type: application/json ; charset=UTF-8
 
 {
-    "nickname": "user3",
+    "nickname": "3",
     "email": "user3@example.com",
     "password": "Userr!!12",
     "gender": 1,  
@@ -58,10 +60,10 @@ POST {{server}}/product/write
 Content-Type: application/json ; charset=UTF-8
 
 {
-    "productName" : "노란 옷",
+    "productName" : "빨간 옷",
     "userId": {{userId}},
     "price": 4000,
-    "content": "노란 옷 팔아요",
+    "content": "빨간 옷 팔아요",
     "categoryName1" : "여성패션",
     "categoryName2" : "의류",
     "categoryName3" : "상의"
@@ -103,5 +105,10 @@ Content-Type: application/json ; charset=UTF-8
     "userId": 1   
 }
 
+### 안전거래 버튼 클릭시 
+POST {{server}}/product/order
+Content-Type: application/json ; charset=UTF-8
 
-
+{
+    "productId" : 4
+}
