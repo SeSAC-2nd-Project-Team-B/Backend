@@ -7,11 +7,13 @@ const sequelize = new Sequelize(
   config.database,
   config.username,
   config.password,
+  
   {
+    host: config.host,
     dialect: config.dialect
   }
 );
-
+console.log("🚀 ~ sequelize:", sequelize)
 
 // 모델 불러오기
 const Active = require("./user/ActiveModel")(sequelize, Sequelize);
@@ -69,6 +71,7 @@ const syncModels = async () => {
 };
 
 Object.keys(db).forEach(modelName => {
+  
   if (db[modelName].associate) {
     db[modelName].associate(db);
   }
