@@ -59,7 +59,6 @@ const ProductModel = (sequelize, DataTypes) => {
         Product.hasOne(models.Category, { foreignKey: 'productId' });
         Product.hasOne(models.Likes, { foreignKey: 'productId' });
         Product.hasOne(models.Report, { foreignKey: 'productId' });
-        Product.hasOne(models.Room, { foreignKey: 'productId' });
     };
     return Product;
 };

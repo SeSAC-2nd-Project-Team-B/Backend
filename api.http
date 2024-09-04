@@ -1,8 +1,8 @@
 @server = http://localhost:8000
-@productId = 2
+@productId = 29
 
 #로그인한 유저
-@userId = 1 
+@userId = 4 
 
 ### 유저정보조회
 GET {{server}}/user/1
@@ -12,7 +12,7 @@ POST {{server}}/login
 Content-Type: application/json ; charset=UTF-8
 
 {
-    "email":"user2@example.com",
+    "email":"user1@example.com",
     "password":"Userr!!12"
 }
 
@@ -50,20 +50,22 @@ Content-Type: application/json ; charset=UTF-8
 }
 
 ### 전체 상품 조회
-GET {{server}}/product/list
+GET {{server}}/product/list?page=3&limit=10
+
+
 
 ### id로 상품 조회
-GET {{server}}/product/read?productId={{productId}}&userId={{userId}}
+GET {{server}}/product/read?productId={{productId}}
 
 ### 상품 추가 
 POST {{server}}/product/write
 Content-Type: application/json ; charset=UTF-8
 
 {
-    "productName" : "빨간 옷",
+    "productName" : "노란초록 옷",
     "userId": {{userId}},
-    "price": 4000,
-    "content": "빨간 옷 팔아요",
+    "price": 5000,
+    "content": "노란초록 옷 팔아요",
     "categoryName1" : "여성패션",
     "categoryName2" : "의류",
     "categoryName3" : "상의"
@@ -90,19 +92,20 @@ Content-Type: application/json ; charset=UTF-8
 DELETE {{server}}/product/delete?productId={{productId}}
 
 ### 찜 클릭시
-POST {{server}}/product/likes?productId={{productId}}&userId={{userId}}
-Content-Type: application/json ; charset=UTF-8
+POST {{server}}/product/likes?productId={{productId}}
+# Content-Type: application/json ; charset=UTF-8
 
-{
-    "userId": 1   
-}
+# {
+#     "userId": 1   
+# }
 
 ### 신고 클릭시
-POST {{server}}/product/report?productId={{productId}}&userId={{userId}}
+POST {{server}}/product/report
 Content-Type: application/json ; charset=UTF-8
 
 {
-    "userId": 1   
+    "userId": 1,
+    "productId" : 4
 }
 
 ### 안전거래 버튼 클릭시 
@@ -111,4 +114,13 @@ Content-Type: application/json ; charset=UTF-8
 
 {
     "productId" : 4
+}
+
+### 로그인
+POST {{server}}/login
+Content-Type: application/json ; charset=UTF-8
+
+{
+    "email":"user3@example.com",
+    "password":"Userr!!12"
 }

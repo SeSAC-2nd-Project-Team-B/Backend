@@ -1,7 +1,7 @@
 const sequelize = require('sequelize');
 const Op = sequelize.Op;
 const { Product, ProductImage, Category, NewProduct, Review, Likes, Report } = require('../../models/Index');
-
+const { paginate, paginateResponse } = require('../../utils/paginate');
 const { getNproductPrice } = require('../../utils/apiHandler');
 const { getLikes, postLikes } = require('../../service/likesService');
 const { getReport, postReportProduct } = require('../../service/reportService');
@@ -32,69 +32,101 @@ exports.postSearch = async (req, res) => {
         });
 
         // 네이버에서 새상품 가격 받아오기
-        console.log("searchWord > ", searchWord);
+        console.log('searchWord > ', searchWord);
 
         const newData = await getNproductPrice(searchWord);
-        console.log("newData > ", newData);
+        console.log('newData > ', newData);
 
         if (result.length) {
             res.send({
                 result: result,
-                newData
+                newData,
             });
-
         } else {
             res.send({ message: '해당 키워드에 맞는 중고리스트가 존재하지 않습니다.' });
         }
     } catch (err) {
-        console.log('error : ', err)
+        console.log('error : ', err);
         // res.status(500).json({ message: 'postSearch 서버 오류', err: err.message });
     }
 };
 
-// 전체 상품 리스트 /product/list
+// 전체 상품 리스트 /product/list?page=1&pageSize=8
 exports.getProductList = async (req, res) => {
     try {
-        const product = await Product.findAll({
+        // 페이지 네이션
+        let { page, limit } = req.query; // 요청 페이지 넘버
+
+        let offset = (page - 1) * limit; // 시작 위치 : 0
+        let listCnt = parseInt(offset) + parseInt(limit - 1);
+
+        console.log(`${page}page : ${offset} ~ ${listCnt}`);
+
+        // const product = await Product.findAll({
+        const productCNT = await Product.findAndCountAll({});
+        // const product = await Product.findAll({
+        //     order: [['productId', 'DESC']],
+        //     raw: true,
+        //     offset,
+        //     limit: parseInt(limit),
+        // });
+
+        const likesCNT = await Product.findAll({
+            attributes: [
+                'productId',
+                'productName',
+                'userId',
+                'price',
+                'content',
+                'viewCount',
+                'status',
+                'buyerId',
+                'createdAt',
+                'updatedAt',
+                [sequelize.fn('COUNT', sequelize.col('Like.likesId')), 'likeCount'] // 좋아요 개수
+            ],
+            include: [
+                {
+                    model: Likes,
+                    attributes: [] // 좋아요의 ID는 필요 없으므로 빈 배열
+                }
+            ],
+            group: ['Product.productId'], // productId로 그룹화
             order: [['productId', 'DESC']],
             raw: true,
+            offset,
+            limit: parseInt(limit),
         });
-        const likesCnt = await Likes.findAll({
-
-            attributes: ['productId', [sequelize.fn('SUM', sequelize.col('likesCount')), 'totalLike']],
-            group: ['productId'],
-            raw: true,
-        });
-        console.log(likesCnt);
-
-        res.send({
-            product,
-            likesCnt: likesCnt
-        })
+        
+        res.send({ totalCount: productCNT.count, likesCNT: likesCNT });
+        
     } catch (err) {
         res.status(500).json({ message: 'getProductList 서버 오류', err: err.message });
     }
 };
 
 // 상품 상세 페이지
-// GET /product/read?productId=""
+// GET /product/read
 exports.getProduct = async (req, res) => {
     try {
+        const userId = req.session.id; //로그인한 유저
+        const { productId } = req.query;
         console.log('req.query > ', req.query);
-        //userId : req.session.id 
-        const { productId, userId } = req.query;
+
         console.log('1개 상품 보기', productId);
+
         // 상품 정보 불러오기
         const product = await Product.findOne({
             where: { productId },
         });
         // 찜 개수 불러오기
         const likeCnt = await getLikes(productId);
+        console.log('likes >> ', likeCnt);
 
-        // 신고 수 불러오기 
-        // const reportCnt = await getReport(productId,userId);
+        // 신고 수 불러오기
+        const reportCnt = await getReport(productId);
 
-        console.log("likes >> ", likeCnt);
+        console.log('reportCnt >> ', reportCnt);
         res.send({
             productId: product.productId,
             productName: product.productName,
@@ -102,9 +134,9 @@ exports.getProduct = async (req, res) => {
             content: product.content,
             viewCount: product.viewCount,
             status: product.status,
-            totalLikes: likeCnt
-        })
-
+            totalLikes: likeCnt,
+            totalReport: reportCnt,
+        });
     } catch (err) {
         // res.send('getProduct error')
         res.status(500).json({ message: 'getProduct 서버 오류', err: err.message });
@@ -288,9 +320,9 @@ exports.deleteProduct = async (req, res) => {
 
 exports.postOrder = async (req, res) => {
     try {
-        const {productId} = req.body
+        const { productId } = req.body;
         const buyerId = 2;
-        // const userId : req.session.id 
+        // const userId : req.session.id
         const result = await Product.update(
             { buyerId },
             {
@@ -302,8 +334,7 @@ exports.postOrder = async (req, res) => {
         } else {
             res.send('수정 완료 !🌟');
         }
-
     } catch (err) {
         res.status(500).json({ message: 'postOrder 서버 오류', err: err.message });
     }
-}
+};
