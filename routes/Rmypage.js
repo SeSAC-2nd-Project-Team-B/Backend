@@ -2,11 +2,14 @@ const express = require('express');
 const controller = require('../controller/user/Cmypage');
 const likesController = require('../service/likesService');
 const reportController = require('../service/reportService');
-const { authenticate, adminOrUser, admin } = require("../middleware/auth");
+const { authenticate, adminOrUser, admin } = require('../middleware/auth');
 const router = express.Router();
 
-// 마이페이지 
+// 마이페이지
 // 기본 요청 경로 localhost:PORT/mypage
+
+// 결제하기 버튼 클릭시
+router.post('/payment', controller.postPayment);
 
 // 구매 및 판매 내역
 // router.post('/', authenticate(adminOrUser), controller.getBuyList)

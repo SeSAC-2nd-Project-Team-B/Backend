@@ -62,14 +62,7 @@ exports.getProductList = async (req, res) => {
 
         console.log(`${page}page : ${offset} ~ ${listCnt}`);
 
-        // const product = await Product.findAll({
         const productCNT = await Product.findAndCountAll({});
-        // const product = await Product.findAll({
-        //     order: [['productId', 'DESC']],
-        //     raw: true,
-        //     offset,
-        //     limit: parseInt(limit),
-        // });
 
         const likesCNT = await Product.findAll({
             attributes: [
@@ -83,13 +76,13 @@ exports.getProductList = async (req, res) => {
                 'buyerId',
                 'createdAt',
                 'updatedAt',
-                [sequelize.fn('COUNT', sequelize.col('Like.likesId')), 'likeCount'] // 좋아요 개수
+                [sequelize.fn('COUNT', sequelize.col('Like.likesId')), 'likeCount'], // 좋아요 개수
             ],
             include: [
                 {
                     model: Likes,
-                    attributes: [] // 좋아요의 ID는 필요 없으므로 빈 배열
-                }
+                    attributes: [], // 좋아요의 ID는 필요 없으므로 빈 배열
+                },
             ],
             group: ['Product.productId'], // productId로 그룹화
             order: [['productId', 'DESC']],
@@ -97,9 +90,8 @@ exports.getProductList = async (req, res) => {
             offset,
             limit: parseInt(limit),
         });
-        
+
         res.send({ totalCount: productCNT.count, likesCNT: likesCNT });
-        
     } catch (err) {
         res.status(500).json({ message: 'getProductList 서버 오류', err: err.message });
     }
@@ -320,20 +312,9 @@ exports.deleteProduct = async (req, res) => {
 
 exports.postOrder = async (req, res) => {
     try {
-        const { productId } = req.body;
-        const buyerId = 2;
-        // const userId : req.session.id
-        const result = await Product.update(
-            { buyerId },
-            {
-                where: { productId },
-            }
-        );
-        if (result === 1) {
-            res.send('수정 실패');
-        } else {
-            res.send('수정 완료 !🌟');
-        }
+        console.log('결제창 페이지');
+        // res.render('productWrite',{title: "결제창 작성 페이지"})
+        res.send('결제 페이지');
     } catch (err) {
         res.status(500).json({ message: 'postOrder 서버 오류', err: err.message });
     }

@@ -1,8 +1,8 @@
 @server = http://localhost:8000
-@productId = 29
+@productId = 30
 
 #로그인한 유저
-@userId = 4 
+@userId = 3
 
 ### 유저정보조회
 GET {{server}}/user/1
@@ -109,12 +109,7 @@ Content-Type: application/json ; charset=UTF-8
 }
 
 ### 안전거래 버튼 클릭시 
-POST {{server}}/product/order
-Content-Type: application/json ; charset=UTF-8
-
-{
-    "productId" : 4
-}
+GET {{server}}/product/order
 
 ### 로그인
 POST {{server}}/login

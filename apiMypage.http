@@ -4,6 +4,13 @@
 #로그인한 유저
 @userId = 2 
 
+### 결제페이지에서 결제 하기 버튼 클릭시 
+POST {{server}}/mypage/payment
+Content-Type: application/json ; charset=UTF-8
+
+{
+    "mypageList": "likes"
+}
 
 ### 마이페이지
 GET {{server}}/mypage
