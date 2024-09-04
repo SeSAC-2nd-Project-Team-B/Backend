@@ -1,8 +1,8 @@
 @server = http://localhost:8000
-@productId = 3
+@productId = 29
 
 #로그인한 유저
-@userId = 2 
+@userId = 4 
 
 ### 유저정보조회
 GET {{server}}/user/1
@@ -50,7 +50,9 @@ Content-Type: application/json ; charset=UTF-8
 }
 
 ### 전체 상품 조회
-GET {{server}}/product/list
+GET {{server}}/product/list?page=3&limit=10
+
+
 
 ### id로 상품 조회
 GET {{server}}/product/read?productId={{productId}}
