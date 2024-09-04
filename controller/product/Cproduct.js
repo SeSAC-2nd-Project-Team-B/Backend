@@ -32,22 +32,21 @@ exports.postSearch = async (req, res) => {
         });
 
         // 네이버에서 새상품 가격 받아오기
-        console.log("searchWord > ", searchWord);
+        console.log('searchWord > ', searchWord);
 
         const newData = await getNproductPrice(searchWord);
-        console.log("newData > ", newData);
+        console.log('newData > ', newData);
 
         if (result.length) {
             res.send({
                 result: result,
-                newData
+                newData,
             });
-
         } else {
             res.send({ message: '해당 키워드에 맞는 중고리스트가 존재하지 않습니다.' });
         }
     } catch (err) {
-        console.log('error : ', err)
+        console.log('error : ', err);
         // res.status(500).json({ message: 'postSearch 서버 오류', err: err.message });
     }
 };
@@ -60,7 +59,6 @@ exports.getProductList = async (req, res) => {
             raw: true,
         });
         const likesCnt = await Likes.findAll({
-
             attributes: ['productId', [sequelize.fn('SUM', sequelize.col('likesCount')), 'totalLike']],
             group: ['productId'],
             raw: true,
@@ -69,32 +67,35 @@ exports.getProductList = async (req, res) => {
 
         res.send({
             product,
-            likesCnt: likesCnt
-        })
+            likesCnt: likesCnt,
+        });
     } catch (err) {
         res.status(500).json({ message: 'getProductList 서버 오류', err: err.message });
     }
 };
 
 // 상품 상세 페이지
-// GET /product/read?productId=""
+// GET /product/read
 exports.getProduct = async (req, res) => {
     try {
+        const userId = req.session.id; //로그인한 유저
+        const { productId } = req.query;
         console.log('req.query > ', req.query);
-        //userId : req.session.id 
-        const { productId, userId } = req.query;
+
         console.log('1개 상품 보기', productId);
+
         // 상품 정보 불러오기
         const product = await Product.findOne({
             where: { productId },
         });
         // 찜 개수 불러오기
         const likeCnt = await getLikes(productId);
+        console.log('likes >> ', likeCnt);
 
-        // 신고 수 불러오기 
-        // const reportCnt = await getReport(productId,userId);
+        // 신고 수 불러오기
+        const reportCnt = await getReport(productId);
 
-        console.log("likes >> ", likeCnt);
+        console.log('reportCnt >> ', reportCnt);
         res.send({
             productId: product.productId,
             productName: product.productName,
@@ -102,9 +103,9 @@ exports.getProduct = async (req, res) => {
             content: product.content,
             viewCount: product.viewCount,
             status: product.status,
-            totalLikes: likeCnt
-        })
-
+            totalLikes: likeCnt,
+            totalReport: reportCnt,
+        });
     } catch (err) {
         // res.send('getProduct error')
         res.status(500).json({ message: 'getProduct 서버 오류', err: err.message });
@@ -288,9 +289,9 @@ exports.deleteProduct = async (req, res) => {
 
 exports.postOrder = async (req, res) => {
     try {
-        const {productId} = req.body
+        const { productId } = req.body;
         const buyerId = 2;
-        // const userId : req.session.id 
+        // const userId : req.session.id
         const result = await Product.update(
             { buyerId },
             {
@@ -302,8 +303,7 @@ exports.postOrder = async (req, res) => {
         } else {
             res.send('수정 완료 !🌟');
         }
-
     } catch (err) {
         res.status(500).json({ message: 'postOrder 서버 오류', err: err.message });
     }
-}
+};
