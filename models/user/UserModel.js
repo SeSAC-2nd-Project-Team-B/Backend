@@ -89,7 +89,7 @@ const UserModel = (sequelize, DataTypes) => {
 
         User.hasMany(models.Review, { foreignKey: 'buyerId', as: 'BuyerReview' }); // 일대다 : 각 유저는 여러개의 리뷰
         User.hasMany(models.Review, { foreignKey: 'sellerId', as: 'SellerReview' }); // 일대다 : 각 유저는 여러개의 리뷰
-      };
+    };
 
     return User;
 };

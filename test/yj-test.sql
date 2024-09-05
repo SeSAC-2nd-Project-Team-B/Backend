@@ -18,19 +18,24 @@ insert into category values(3,"상의",8,2,3,now(),now());
 
 drop table category;
 desc category;
+desc product;
 select * from category;
-
+desc category;
 insert into product values(30,"물",1,10000,"물 팔아요",0,"판매중",null,now(),now());
 desc likes;
 select * from user;
+select * from active;
+update active set isActive=0 where userId=4;
 select * from report;
-select * from product;
+select * from product order by productId desc;
 delete from report where reportId>=1;
-SELECT `productId`, `productName`, `userId`, `price`, `content`, `viewCount`, `status`, `buyerId`, `createdAt`, `updatedAt` FROM `Product` AS `Product` ORDER BY `Product`.`productId` DESC LIMIT 10, 10;
+
 SELECT * FROM `Product` AS `Product` ORDER BY `Product`.`productId` DESC LIMIT 0, 10;
 
 select * from product order by productId desc;
-select * from user;
+select * from category;
+
+
 
 SELECT `User`.*, `Products`.`buyerId` AS `Products.buyerId`, `Products`.`price` AS `Products.price` FROM (SELECT `User`.`userId`, `User`.`nickname`, `User`.`email`, `User`.`password`, `User`.`gender`, `User`.`age`, `User`.`temp`, `User`.`profile_image`, `User`.`money`, `User`.`point`, `User`.`createdAt`, `User`.`updatedAt` FROM `User` AS `User` WHERE ( SELECT `buyerId` FROM `Product` AS `Products` WHERE (`Products`.`buyerId` = 3 AND `Products`.`buyerId` = `User`.`userId`) LIMIT 1 ) IS NOT NULL LIMIT 1) AS `User` INNER JOIN `Product` AS `Products` ON `User`.`userId` = `Products`.`buyerId` AND `Products`.`buyerId` = 3;
 

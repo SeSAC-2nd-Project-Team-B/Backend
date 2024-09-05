@@ -16,7 +16,7 @@ const cors = require('cors');
 
 // dotenv.config(); // config.js와 중복부분(불러오지 못할 시 주석 해제)
 const config = require('./config/config')[process.env.NODE_ENV || 'development'];
-console.log("🚀 ~ config:", config)
+// console.log("🚀 ~ config:", config)
 const port = process.env.PORT || 8080;
 
 app.set("view engine", "ejs");

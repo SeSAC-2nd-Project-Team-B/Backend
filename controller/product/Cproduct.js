@@ -1,13 +1,22 @@
 const sequelize = require('sequelize');
 const Op = sequelize.Op;
-const { User, Active, Product, ProductImage,
-    Category, NewProduct, Review, Likes, Report } = require('../../models/Index');
+const {
+    User,
+    Active,
+    Product,
+    ProductImage,
+    Category,
+    NewProduct,
+    Review,
+    Likes,
+    Report,
+} = require('../../models/Index');
 const { paginate, paginateResponse } = require('../../utils/paginate');
 const { getNproductPrice } = require('../../utils/apiHandler');
 const { getLikes, postLikes } = require('../../service/likesService');
 const { getReport, postReportProduct } = require('../../service/reportService');
 const { isLoginUser, isWriter } = require('../../service/isLoginActive');
-
+const { saveCategory ,saveCategory2, saveCategory3} = require('../../utils/saveCategory');
 const axios = require('axios');
 const dotenv = require('dotenv');
 dotenv.config();
@@ -73,6 +82,7 @@ exports.getProductList = async (req, res) => {
                 'userId',
                 'price',
                 'content',
+                'categoryId',
                 'viewCount',
                 'status',
                 'buyerId',
@@ -126,13 +136,13 @@ exports.getProduct = async (req, res) => {
             productName: product.productName,
             price: product.price,
             content: product.content,
+            categoryId: product.categoryId,
             viewCount: product.viewCount,
             status: product.status,
             totalLikes: likeCnt,
             totalReport: reportCnt,
         });
     } catch (err) {
-        // res.send('getProduct error')
         res.status(500).json({ message: 'getProduct 서버 오류', err: err.message });
     }
 };
@@ -164,18 +174,7 @@ exports.postProduct = async (req, res) => {
         if (!result) {
             return;
         }
-        const {
-            productName,
-            userId,
-            price,
-            content,
-            categoryName1,
-            categoryName2,
-            categoryName3,
-            category1,
-            category2,
-            category3,
-        } = req.body;
+        const { productName, userId, price, content, categoryId } = req.body;
 
         // productId를 받기 위한 조회
         // const lastProductId = await Product.findOne({
@@ -189,26 +188,8 @@ exports.postProduct = async (req, res) => {
             userId,
             price,
             content,
+            categoryId,
         });
-
-        // 카테고리 추가
-        // for (i = 1; i < 4; i++) {
-        //     console.log(
-        //         'categoryName > ',
-        //         `${categoryName} + ${i}`,
-        //         lastProductId.productId + 1,
-        //         'parentCategoryId > ',
-        //         i - 1,
-        //         'level > ',
-        //         i
-        //     );
-        //     const productCategory = await Category.create({
-        //         categoryName: `${categoryName}${i}`,
-        //         productId: lastProductId.productId + 1,
-        //         parentCategoryId: i - 1, // 수정필요
-        //         level: i,
-        //     });
-        // }
 
         res.json(newSecHandProduct);
     } catch (err) {
@@ -248,7 +229,7 @@ exports.patchProductUpdate = async (req, res) => {
         console.log('상품 수정 버튼 클릭됨.');
         console.log('req.body > ', req.body);
         const { productId } = req.query;
-        const { productName, price, content, status } = req.body;
+        const { productName, price, content, categoryId, status } = req.body;
         const result = await isLoginUser(req, res);
 
         if (!result) return;
@@ -264,6 +245,7 @@ exports.patchProductUpdate = async (req, res) => {
                     productName,
                     price,
                     content,
+                    categoryId,
                     status,
                 },
                 {
@@ -355,10 +337,10 @@ exports.deleteProduct = async (req, res) => {
 // 안전거래 버튼 클릭시
 exports.getOrder = async (req, res) => {
     try {
-        console.log('안전 거래 버튼 클릭',req.query);
+        console.log('안전 거래 버튼 클릭', req.query);
         const { productId } = req.query;
         const result = await isLoginUser(req, res);
-        
+
         if (!result) return;
 
         const writer = await isWriter(req, productId);
@@ -366,7 +348,7 @@ exports.getOrder = async (req, res) => {
 
         if (writer) {
             res.status(400).json({ message: '본인은 본인 물건을 살 수 없다!' });
-        }else{
+        } else {
             // res.render('productWrite',{title: "결제창 페이지"})
             res.send('결제 페이지로 이동합니다...');
         }
@@ -375,3 +357,26 @@ exports.getOrder = async (req, res) => {
     }
 };
 
+// 카테고리
+exports.postCategory = async (req, res) => {
+    try {
+        // 카테고리 목록 저장
+        const result = await Category.findAndCountAll({
+          where: { level: 1 },
+        });
+        console.log("result >", result.count);
+        
+        if(result.count != 11) {
+            saveCategory(); //11
+            // saveCategory2(); //231
+            // saveCategory3(); //1912
+        }
+
+        saveCategory2();
+        res.send(result)
+        // const result = await Category.findAll({});
+        // res.send({ data: result });
+    } catch (error) {
+        res.status(500).json({ message: 'postCategory 서버 오류', err: err.message });
+    }
+};

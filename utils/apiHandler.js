@@ -18,7 +18,7 @@ exports.getNproductPrice = async (req, res) => {
       const response = await axios.get(url, {
         params:{
           display: 10,
-          sort: 'sim',
+          sort: 'asc',
 
         },
         headers: {
