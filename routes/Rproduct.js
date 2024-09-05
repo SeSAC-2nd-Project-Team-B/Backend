@@ -43,6 +43,6 @@ router.post('/likes', likesController.postLikes);
 router.post('/report', reportController.postReportProduct);
 
 // 안전거래 버튼 클릭시
-router.get('/order', controller.postOrder);
+router.get('/order', controller.getOrder);
 
 module.exports = router;

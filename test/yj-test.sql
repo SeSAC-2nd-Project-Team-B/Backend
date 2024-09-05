@@ -30,16 +30,16 @@ SELECT `productId`, `productName`, `userId`, `price`, `content`, `viewCount`, `s
 SELECT * FROM `Product` AS `Product` ORDER BY `Product`.`productId` DESC LIMIT 0, 10;
 
 select * from product order by productId desc;
+select * from user;
 
-SELECT Product.productId, count(likesCount) FROM `Likes`  
-LEFT OUTER JOIN `Product`  ON `Likes`.`productId` = `Product`.`productId`;
+SELECT `User`.*, `Products`.`buyerId` AS `Products.buyerId`, `Products`.`price` AS `Products.price` FROM (SELECT `User`.`userId`, `User`.`nickname`, `User`.`email`, `User`.`password`, `User`.`gender`, `User`.`age`, `User`.`temp`, `User`.`profile_image`, `User`.`money`, `User`.`point`, `User`.`createdAt`, `User`.`updatedAt` FROM `User` AS `User` WHERE ( SELECT `buyerId` FROM `Product` AS `Products` WHERE (`Products`.`buyerId` = 3 AND `Products`.`buyerId` = `User`.`userId`) LIMIT 1 ) IS NOT NULL LIMIT 1) AS `User` INNER JOIN `Product` AS `Products` ON `User`.`userId` = `Products`.`buyerId` AND `Products`.`buyerId` = 3;
 
 select productId, count(*) from likes group by productId;
 
 SELECT Product.productId, Likes.productId FROM `Product` AS `Product` 
 LEFT OUTER JOIN `Likes` ON `Product`.`productId` = `Likes`.`productId`;
 
-update user set money=10000 where userId=2;
+update user set money=100000 where userId=3;
 select * from likes;
 desc user;
 desc product;

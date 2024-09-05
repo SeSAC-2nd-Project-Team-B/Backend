@@ -1,4 +1,5 @@
 const { Product, Likes } = require('../models/Index');
+const { isLoginUser, isWriter } = require('../service/isLoginActive');
 var sequelize = require('sequelize');
 
 exports.getLikes = async (req, res) => {
@@ -22,15 +23,23 @@ exports.getLikes = async (req, res) => {
 };
 
 exports.postLikes = async (req, res) => {
-    console.log('postlikes >>> --------------');
-
+    console.log(">>> ", isLoginUser);
+    const { productId } = req.query;
     try {
         console.log('req.query > ', req.query);
 
-        const { productId } = req.query;
-        const userId = req.session.userId;
+        const userId = await isLoginUser(req, res);
+        console.log('userId > ', userId)
+        if (!userId) return;
+        
+        const writer = await isWriter(req, productId);
+        console.log("writer>> ",writer)
+        
+        if(writer){
+            res.send({"message": "본인은 본인글에 찜을 누를 수 없다."})
+        }else{
 
-        const userlikes = await Likes.findOne({
+        const userLikes = await Likes.findOne({
             where: {
                 productId,
                 userId,
@@ -38,8 +47,8 @@ exports.postLikes = async (req, res) => {
             attributes: ['likesCount'],
             raw: true,
         });
-        console.log('b4 likesCount >> ', userlikes);
-        if (userlikes) {
+        console.log('b4 likesCount >> ', userLikes);
+        if (userLikes) {
             console.log('product, user 가 table 에 존재함.');
 
             const isAlreadyLike = await Likes.findOne({
@@ -73,13 +82,13 @@ exports.postLikes = async (req, res) => {
                 raw: true,
             });
             if (!isUser) {
-                console.log(`product 에 대한 좋아요는 있지만,
-                    ${userId}의 값은 없으므로 새로 생성한다.`);
+                console.log(`${userId}의 찜 내역은 없으므로 새로 생성한다.`);
                 await likesCreate(productId, userId, 1);
             }
-        } // else
+        } 
         res.send(`${userId}번 유저가 ${productId}번 상품에 
                 좋아요를 눌렀습니다.`);
+            }
     } catch (err) {
         res.status(500).json({ message: 'postLikes 서버 오류', err: err.message });
     }

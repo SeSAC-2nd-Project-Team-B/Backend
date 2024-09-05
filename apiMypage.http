@@ -1,15 +1,25 @@
 @server = http://localhost:8000
-@productId = 4
+@productId = 30
 
 #로그인한 유저
-@userId = 2 
+@userId = 3 
+
+
+### 로그인
+POST {{server}}/login
+Content-Type: application/json ; charset=UTF-8
+
+{
+    "email":"user3@example.com",
+    "password":"Userr!!12"
+}
 
 ### 결제페이지에서 결제 하기 버튼 클릭시 
 POST {{server}}/mypage/payment
 Content-Type: application/json ; charset=UTF-8
 
 {
-    "mypageList": "likes"
+    "productId": {{productId}}
 }
 
 ### 마이페이지
