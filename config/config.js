@@ -13,6 +13,14 @@ const config = {
     "database": process.env.DB,
     "host": process.env.DBHOST,
     "dialect": process.env.DBDIALECT,
+  },
+  "production": {
+    "username": process.env.DBUSER,
+    "password": process.env.DBPW,
+    "database": process.env.DB,
+    "host": process.env.DBHOST,
+    "dialect": process.env.DBDIALECT,
+    "logging": console.log
   }
 }
 
