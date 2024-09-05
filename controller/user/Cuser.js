@@ -10,14 +10,14 @@ const reportService = require("../../service/reportService");
 // 유저 생성 // 회원가입
 exports.postUser = async(req, res) => {
     try {
-        const { nickname, email, password, gender, age, profile_image, isAdmin, isActive,
+        const { nickname, email, password, gender, age, isAdmin, isActive,
                 depth1, depth2, depth3, depth4, 
               } = req.body;
         
         const hashedPassword = await encUtil.hashPw(password);
 
         const newUser = await User.create({
-            nickname, email, password: hashedPassword, gender, age, profile_image
+            nickname, email, password: hashedPassword, gender, age
         });
         
         
@@ -113,7 +113,7 @@ exports.getUser = async (req, res) => {
 // 특정 유저 내용 수정 
 exports.patchUser = async(req, res) => {
     try {
-        const { nickname, password, newPassword, gender, age, profile_image, isAdmin, isActive,
+        const { nickname, password, newPassword, gender, age, isAdmin, isActive,
             depth1, depth2, depth3, depth4 
         } = req.body;
         
