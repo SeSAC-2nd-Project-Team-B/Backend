@@ -1,6 +1,11 @@
 const express = require('express');
 const router = express.Router();
-const errorHandler = require("../middleware/errorHandler")
+const fs = require('fs');
+const path = require('path');
+const errorHandler = require("../middleware/errorHandler");
+const swaggerUi = require('swagger-ui-express');
+const swaggerFilePath = path.resolve(__dirname, '../swagger-output.json');
+
 
 const Ruser = require('./Ruser');
 const Rroom = require('./Rroom');
@@ -22,6 +27,14 @@ router.use('/messages', Rmessage);
 router.use('/mypage', Rmypage);
 router.use('/review', Rreview);
 router.use('/uploadImg', RuploadImg);
+
+// swagger-output.json 파일이 존재하는지 확인
+if (fs.existsSync(swaggerFilePath)) {
+    const swaggerDocument = require(swaggerFilePath);
+    router.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+  } else {
+    console.log('Swagger 문서가 아직 생성되지 않았습니다.');
+  }
 
 // s3 테스트용
 const RuploadImgTest = require('./RuploadImgTest');

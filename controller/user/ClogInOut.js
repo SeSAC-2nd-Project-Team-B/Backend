@@ -35,7 +35,7 @@ exports.userLogin = async (req, res) => {
         auth.createSession(req, user.userId, user.Active.isActive, user.Active.isAdmin);
         const token = auth.createToken(req.sessionID);
 
-        res.json({ message: '로그인 성공', user, token});
+        res.json({ message: '로그인 성공', user, token: `Bearer ${token}`});
 
     } catch (err) {
         console.log(err.message);

@@ -32,6 +32,8 @@
     "sequelize": "^6.37.3",
     "sequelize-cli": "^6.6.2",
     "socket.io": "^4.7.5",
+    "swagger-autogen": "^2.23.7",
+    "swagger-ui-express": "^5.0.1",
     "xlsx": "^0.18.5"
   }
 }
