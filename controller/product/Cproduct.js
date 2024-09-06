@@ -16,7 +16,8 @@ const { getNproductPrice } = require('../../utils/apiHandler');
 const { getLikes, postLikes } = require('../../service/likesService');
 const { getReport, postReportProduct } = require('../../service/reportService');
 const { isLoginUser, isWriter } = require('../../service/isLoginActive');
-const { saveCategory ,saveCategory2, saveCategory3} = require('../../utils/saveCategory');
+const { saveCategory } = require('../../utils/saveCategory');
+const uploadImgProduct = require('../../middleware/uploadImgProductMiddleware');
 const axios = require('axios');
 const dotenv = require('dotenv');
 dotenv.config();
@@ -130,6 +131,9 @@ exports.getProduct = async (req, res) => {
         // 신고 수 불러오기
         const reportCnt = await getReport(productId);
 
+        // 이미지 불러오기
+        const getImages = uploadImgProduct.getProductImg(req, productId, 'product');
+
         console.log('reportCnt >> ', reportCnt);
         res.send({
             productId: product.productId,
@@ -169,27 +173,61 @@ exports.getProductWrite = async (req, res) => {
 exports.postProduct = async (req, res) => {
     try {
         console.log('상품 등록 버튼 클릭');
-        const result = await isLoginUser(req, res);
+        // const result = await isLoginUser(req, res);
 
-        if (!result) {
-            return;
-        }
-        const { productName, userId, price, content, categoryId } = req.body;
+        // if (!result) {
+        //     return;
+        // }
+        // const { productName, userId, price, content, categoryId } = req.body;
+        // 지우기
+        const userId = 1;
+        const { productName, price, content, categoryId } = req.body;
+
+        var imgFileArr = req.files;
 
         // productId를 받기 위한 조회
-        // const lastProductId = await Product.findOne({
-        //     order: [['createdAt', 'DESC']],
-        //     attributes: ['productId'],
-        // });
-        // console.log('lastProId >>>>>> ', lastProductId.productId + 1);
+        let lastProductId = await Product.findOne({
+            order: [['createdAt', 'DESC']],
+            attributes: ['productId'],
+        });
+        const newProductId = lastProductId ? lastProductId.productId + 1 : 1;
+        console.log('newProductId >>>>>> ', newProductId);
 
         const newSecHandProduct = await Product.create({
-            productName,
-            userId,
-            price,
-            content,
-            categoryId,
+            productName: 1,
+            userId: 1,
+            price: 1,
+            content: 1,
+            categoryId: 4362,
         });
+
+        // 중고 상품 이미지 저장
+        const extractFilenames = [];
+        // for(product in imgFileArr){
+        //     console.log(imgFileArr[product])
+        // }
+        for (const product in imgFileArr) {
+            imgFileArr[product].forEach(item => {
+                console.log(">>",item.originalname);
+                extractFilenames.push(item.originalname);
+            });
+        }
+        // const uploadS3 = await uploadImgProduct.postUploadFile();
+        // console.log('uploadS3 > ', uploadS3);
+
+        // 추출된 filename들
+        
+        console.log('extractFilenames > ', extractFilenames);
+
+        for (i = 0; i < extractFilenames.length; i++) {
+            console.log('i >> ', i);
+
+            const newImage = await ProductImage.create({
+                productId: newProductId,
+                productImage: extractFilenames[i],
+            });
+        }
+        console.log('saved');
 
         res.json(newSecHandProduct);
     } catch (err) {
@@ -230,6 +268,7 @@ exports.patchProductUpdate = async (req, res) => {
         console.log('req.body > ', req.body);
         const { productId } = req.query;
         const { productName, price, content, categoryId, status } = req.body;
+
         const result = await isLoginUser(req, res);
 
         if (!result) return;
@@ -253,6 +292,8 @@ exports.patchProductUpdate = async (req, res) => {
                 }
             );
             var imgFileArr = req.files;
+            const uploadS3 = await uploadImgProduct.postUploadFile;
+            console.log('>> uploadS3', uploadS3);
             console.log('req.files >> ', req.files);
             // filename 속성을 추출하는 함수
             const extractFilenames = (imgArr) => {
@@ -271,29 +312,16 @@ exports.patchProductUpdate = async (req, res) => {
             console.log('filenames >>> ', filenames);
             for (i = 0; i < filenames.length; i++) {
                 let main_img = i + 1;
-                const existingRecord = await Recipe_Img.findOne({
-                    where: { recipe_num, main_img },
+                const existingRecord = await ProductImage.destroy({
+                    where: { productId },
                 });
                 console.log('existingRecord > ', existingRecord);
-                //이미지 찾기
-                if (existingRecord) {
-                    console.log('i >> ', i, filenames[i]);
-                    const newImage = await Recipe_Img.update(
-                        {
-                            image_url: filenames[i],
-                        },
-                        {
-                            where: { recipe_num, main_img },
-                        }
-                    );
-                } else {
-                    const newImage = await ProductImage.create({
-                        productId: productId,
-                        image_url: filenames[i],
-                        main_img: i + 1,
-                    });
-                    console.log('기존에 값이 없으므로 추가햇음 > ', main_img, i);
-                }
+
+                const newImage = await ProductImage.create({
+                    productId: productId,
+                    productImage: filenames[i],
+                });
+                console.log('기존에 값이 없으므로 추가햇음 > ');
             }
             res.send('업데이트 완료');
         }
@@ -362,21 +390,22 @@ exports.postCategory = async (req, res) => {
     try {
         // 카테고리 목록 저장
         const result = await Category.findAndCountAll({
-          where: { level: 1 },
+            where: { level: 3 },
         });
-        console.log("result >", result.count);
-        
-        if(result.count != 11) {
-            saveCategory(); //11
-            // saveCategory2(); //231
-            // saveCategory3(); //1912
+        console.log('result :', result.count);
+
+        if (result.count < 1900) {
+            console.log('소분류 카테고리 1900개 이하이므로 저장합니다. ');
+            await Category.destroy({
+                where: {
+                    categoryId: { [Op.gte]: 1 },
+                },
+            });
+            await saveCategory(req, res); //11 //231 //1912
         }
 
-        // saveCategory2();
-        res.send(result)
-        // const result = await Category.findAll({});
-        // res.send({ data: result });
-    } catch (error) {
+        res.send(result);
+    } catch (err) {
         res.status(500).json({ message: 'postCategory 서버 오류', err: err.message });
     }
 };
