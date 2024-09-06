@@ -1,6 +1,25 @@
 const { User } = require("../models/Index");
 const { check, validationResult } = require("express-validator");
 
+// 이메일 중복 체크
+exports.checkEmail = async (req, res) => {
+    const { email } = req.body;
+    const existingEmail = await User.findOne({ where: { email } });
+      if (existingEmail) {
+        return res.status(409).json({ message: "이미 사용중인 이메일입니다." });
+      }
+  }
+    
+  // 닉네임 중복 체크
+  exports.checkNickname = async (req, res) => {
+    const { nickname } = req.body;
+    const existingNickname = await User.findOne({ where: { nickname } });
+      if (existingNickname) {
+        return res.status(409).json({ message: "이미 사용중인 닉네임입니다." });
+      }
+  }
+
+// 회원가입 시 유효성 검사
 exports.validation = async (req, res, next) => {
     try {
         const { nickname, email } = req.body;

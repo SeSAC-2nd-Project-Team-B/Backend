@@ -3,7 +3,7 @@ const router = express.Router();
 const controller = require("../controller/user/Cuser");
 const controllerMoney = require("../controller/user/Cmoney");
 const { authenticate, adminOrUser, admin } = require("../middleware/auth");
-const { validation } = require("../middleware/validation")
+const { validation, checkEmail, checkNickname } = require("../middleware/validation")
 
 // 기본 요청 경로 localhost:PORT/user
 
@@ -13,6 +13,8 @@ router.post(`/`, validation, controller.postUser);
 // 머니 충전
 router.post(`/money/:userId`, authenticate(adminOrUser), controllerMoney.postMoney);
 
+// 토큰으로 유저 조회
+router.post(`/token`, controller.getUserByToken);
 
 // 전체 유저 목록 조회 (검색)
 /** 
@@ -21,6 +23,13 @@ router.post(`/money/:userId`, authenticate(adminOrUser), controllerMoney.postMon
  * localhost:8000/user/list (회원전체 검색)
 */
 router.get(`/list`, authenticate(admin), controller.getUserList);
+
+// 이메일 중복 체크
+router.get(`/checkEmail`, checkEmail);
+
+// 닉네임 중복 체크
+router.get(`/checkNickname`, checkNickname);
+
 
 // 특정 유저 한명 조회
 // router.get(`/:userId`, authenticate(adminOrUser), controller.getUser);
@@ -31,9 +40,6 @@ router.patch(`/:userId`, authenticate(adminOrUser), validation, controller.patch
 
 // 특정 유저 삭제
 router.delete(`/:userId`, authenticate(adminOrUser), controller.deleteUser);
-
-// 토큰으로 유저 조회
-router.post(`/token`, controller.getUserByToken);
 
 
 module.exports = router;
