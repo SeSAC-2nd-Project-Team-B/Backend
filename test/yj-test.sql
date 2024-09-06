@@ -19,7 +19,10 @@ insert into category values(3,"상의",8,2,3,now(),now());
 drop table category;
 desc category;
 desc product;
+desc user;
+select count(*) from category;
 select * from category;
+delete  from category where categoryId>=1;
 desc category;
 insert into product values(30,"물",1,10000,"물 팔아요",0,"판매중",null,now(),now());
 desc likes;
@@ -84,3 +87,6 @@ drop table active;
 drop table product;
 drop table user;
 
+desc product;
+
+show tables;

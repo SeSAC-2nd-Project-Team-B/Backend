@@ -16,7 +16,7 @@ const { getNproductPrice } = require('../../utils/apiHandler');
 const { getLikes, postLikes } = require('../../service/likesService');
 const { getReport, postReportProduct } = require('../../service/reportService');
 const { isLoginUser, isWriter } = require('../../service/isLoginActive');
-const { saveCategory ,saveCategory2, saveCategory3} = require('../../utils/saveCategory');
+const { saveCategory } = require('../../utils/saveCategory');
 const axios = require('axios');
 const dotenv = require('dotenv');
 dotenv.config();
@@ -360,23 +360,31 @@ exports.getOrder = async (req, res) => {
 // 카테고리
 exports.postCategory = async (req, res) => {
     try {
+        // console.log('>>>> ', req);
+
         // 카테고리 목록 저장
         const result = await Category.findAndCountAll({
-          where: { level: 1 },
+            where: { level: 3 },
         });
-        console.log("result >", result.count);
-        
-        if(result.count != 11) {
-            saveCategory(); //11
-            // saveCategory2(); //231
-            // saveCategory3(); //1912
+        console.log('result :', result.count);
+
+        if (result.count < 1900) {
+            console.log('소분류 카테고리 1900개 이하이므로 저장합니다. ');
+            await Category.destroy({
+                where:{
+                    categoryId : {[Op.gte]:1}
+                },
+
+            }
+        );
+            await saveCategory(req, res); //11 //231 //1912
         }
 
         // saveCategory2();
-        res.send(result)
+        res.send(result);
         // const result = await Category.findAll({});
         // res.send({ data: result });
-    } catch (error) {
+    } catch (err) {
         res.status(500).json({ message: 'postCategory 서버 오류', err: err.message });
     }
 };
