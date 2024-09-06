@@ -7,6 +7,8 @@ exports.checkEmail = async (req, res) => {
     const existingEmail = await User.findOne({ where: { email } });
       if (existingEmail) {
         return res.status(409).json({ message: "이미 사용중인 이메일입니다." });
+      } else {
+        return res.status(200).json({ message: "사용 가능한 이메일입니다." });
       }
   }
     
@@ -16,6 +18,8 @@ exports.checkEmail = async (req, res) => {
     const existingNickname = await User.findOne({ where: { nickname } });
       if (existingNickname) {
         return res.status(409).json({ message: "이미 사용중인 닉네임입니다." });
+      } else {
+        return res.status(200).json({ message: "사용 가능한 닉네임입니다." });
       }
   }
 
