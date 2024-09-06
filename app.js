@@ -20,6 +20,7 @@ const config = require('./config/config')[process.env.NODE_ENV || 'development']
 const port = process.env.PORT || 8080;
 
 app.set("view engine", "ejs");
+app.set('views', path.join(__dirname, 'views'));
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());

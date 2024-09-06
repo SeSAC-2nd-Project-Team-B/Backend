@@ -49,7 +49,7 @@ const UserModel = (sequelize, DataTypes) => {
         },
 
         // 프로필 이미지
-        profile_image: {
+        profileImage: {
             type: DataTypes.STRING,
             allowNull: true,
         },
