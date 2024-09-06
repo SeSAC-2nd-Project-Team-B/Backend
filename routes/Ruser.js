@@ -25,10 +25,10 @@ router.post(`/token`, controller.getUserByToken);
 router.get(`/list`, authenticate(admin), controller.getUserList);
 
 // 이메일 중복 체크
-router.get(`/checkEmail`, checkEmail);
+router.post(`/checkEmail`, checkEmail);
 
 // 닉네임 중복 체크
-router.get(`/checkNickname`, checkNickname);
+router.post(`/checkNickname`, checkNickname);
 
 
 // 특정 유저 한명 조회
