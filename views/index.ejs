@@ -20,6 +20,20 @@
         <button type="submit">이미지 업로드</button>
     </form>
 
+
+    <h2>상품 이미지 업로드</h2>
+    <form action="/test/product/write" method="POST" enctype="multipart/form-data">
+        이미지1<input type="file" name="productImg1" accept="image/*" required ><br>
+        이미지2<input type="file" name="productImg2" accept="image/*" ><br>
+        <label>이미지 유형: </label>
+        <select name="type" required>
+            <option value="user">User</option>
+            <option value="product" selected>Product</option>
+        </select>
+        <button type="submit">이미지 업로드</button>
+    </form>
+
+
     <!-- 업로드된 이미지 및 경로 -->
     <h2>프로필 이미지</h2>
     <% if (profileImgUrl && profileImgUrl !== '') { %>

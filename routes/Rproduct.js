@@ -3,6 +3,7 @@ const controller = require('../controller/product/Cproduct');
 const likesController = require('../service/likesService');
 const reportController = require('../service/reportService');
 const utilController = require('../utils/apiHandler');
+const { postUpProductImage } = require('../middleware/uploadImgProductMiddleware');
 const router = express.Router();
 
 // 기본 요청 경로 localhost:PORT/product
@@ -22,7 +23,7 @@ router.get('/read', controller.getProduct);
 router.get('/write', controller.getProductWrite);
 
 // 상품 등록 버튼 클릭시
-router.post('/write', controller.postProduct);
+router.post('/write', postUpProductImage, controller.postProduct);
 
 // 특정 상품 수정 페이지
 router.get('/update', controller.getProductUpdate);

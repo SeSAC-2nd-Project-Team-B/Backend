@@ -17,7 +17,7 @@ const ProductImageModel = (sequelize, DataTypes) => {
             },
             // 상품 이미지
             productImage: {
-                type: DataTypes.BIGINT,
+                type: DataTypes.STRING(2000),
                 allowNull: false,
             },
         },

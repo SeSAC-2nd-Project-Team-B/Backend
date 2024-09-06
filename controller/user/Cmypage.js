@@ -254,11 +254,9 @@ exports.deleteLikesDelete = async (req, res) => {
         const userId = req.session.userId;
         const result = await isLoginUser(req, res);
 
-        // if (!result) return;
         
-        if (!result) {
-            // res.status(400).json({ message: '로그인 유저와 작성자가 일치하지 않습니다.' });
-        } else {
+        
+        if(result) {
             const isDeleted = await Likes.destroy({
                 where: { productId , userId },
             });
