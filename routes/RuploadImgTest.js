@@ -1,7 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const controller = require("../controller/user/CuploadImg");
-const { upload } = require("../middleware/uploadImgMiddleware");
+const pro_controller = require('../controller/product/Cproduct');
+const { upload, postUploadFile } = require("../middleware/uploadImgMiddleware");
 
 // 기본 요청 경로 localhost:PORT/test
 
@@ -20,5 +21,14 @@ router.post('/post/:type/:userId', upload.single('profileImg'), controller.s3Img
 
 // // s3 delete 테스트
 // router.get('/test/delete/:userId', controller.s3ImgDeleteTest);
+
+
+// test/product/write
+router.get('/product/write', (req, res) => {
+
+    res.render('index', { type : 'product', userId : 1, profileImgUrl: '', errorMessage: null });
+});
+
+router.post('/product/write' , postUploadFile, pro_controller.postProduct )
 
 module.exports = router;

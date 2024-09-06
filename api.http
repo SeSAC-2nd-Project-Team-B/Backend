@@ -70,8 +70,8 @@ Content-Type: application/json ; charset=UTF-8
     "userId": {{userId}},
     "price": 5000,
     "content": "노란초록 옷 팔아요",
-    "categoryId" : 760
-
+    "categoryId" : 4362,
+    "images": "['a','b','c']"
 }
 
 ### 상품 수정 페이지 

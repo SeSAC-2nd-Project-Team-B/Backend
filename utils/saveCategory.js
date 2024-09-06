@@ -55,4 +55,3 @@ exports.saveCategory = async (req, res) => {
         // return res.status(500).json({ message: 'saveCategory 서버 오류', err: error.message }); // JSON 형식으로 응답
     }
 };
-// exports.modules = saveCategory1;
