@@ -13,7 +13,9 @@ const sequelize = new Sequelize(
     dialect: config.dialect
   }
 );
+
 console.log("🚀 ~ sequelize:", sequelize.options.host)
+
 
 // 모델 불러오기
 const Active = require("./user/ActiveModel")(sequelize, Sequelize);
@@ -32,6 +34,7 @@ const Category = require('./product/CategoryModel')(sequelize,Sequelize);
 const Likes = require('./product/LikesModel')(sequelize,Sequelize);
 const Report = require('./product/ReportModel')(sequelize,Sequelize);
 const ProductHashtag = require('./product/ProductHashtagModel')(sequelize,Sequelize);
+
 
 db.Active = Active;
 db.Coupon = Coupon;
@@ -84,3 +87,4 @@ db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 
 module.exports = db;
+

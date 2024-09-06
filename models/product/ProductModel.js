@@ -32,6 +32,10 @@ const ProductModel = (sequelize, DataTypes) => {
                 type: DataTypes.STRING(2000),
                 allowNull: false,
             },
+            categoryId: {
+                type: DataTypes.BIGINT,
+                allowNull: false,
+            },
             viewCount: {
                 type: DataTypes.BIGINT,
                 allowNull: false,
@@ -56,7 +60,7 @@ const ProductModel = (sequelize, DataTypes) => {
         Product.belongsTo(models.User, { foreignKey: 'userId' });
         Product.hasMany(models.ProductHashtag, { foreignKey: 'productId' });
         Product.hasOne(models.ProductImage, { foreignKey: 'productId' });
-        Product.hasOne(models.Category, { foreignKey: 'productId' });
+        Product.belongsTo(models.Category, { foreignKey: 'categoryId' });
         Product.hasOne(models.Likes, { foreignKey: 'productId' });
         Product.hasOne(models.Report, { foreignKey: 'productId' });
     };

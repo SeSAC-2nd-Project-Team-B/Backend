@@ -3,6 +3,7 @@ const controller = require('../controller/user/Cmypage');
 const likesController = require('../service/likesService');
 const reportController = require('../service/reportService');
 const { authenticate, adminOrUser, admin } = require('../middleware/auth');
+
 const router = express.Router();
 
 // 마이페이지
@@ -20,5 +21,8 @@ router.post('/issell', controller.postSellCheck);
 
 // 구매 내역 - 상품 확인완료/거절
 router.post('/check', controller.postProductCheck);
+
+// 찜 내역 삭제
+router.delete('/likesdelete', controller.deleteLikesDelete);
 
 module.exports = router;

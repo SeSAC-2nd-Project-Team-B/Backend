@@ -45,4 +45,7 @@ router.post('/report', reportController.postReportProduct);
 // 안전거래 버튼 클릭시
 router.get('/order', controller.getOrder);
 
+// 카테고리
+router.get('/category',controller.postCategory);
+
 module.exports = router;
