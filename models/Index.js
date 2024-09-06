@@ -13,7 +13,9 @@ const sequelize = new Sequelize(
     dialect: config.dialect
   }
 );
-// console.log("🚀 ~ sequelize:", sequelize)
+
+console.log("🚀 ~ sequelize:", sequelize.options.host)
+
 
 // 모델 불러오기
 const Active = require("./user/ActiveModel")(sequelize, Sequelize);
