@@ -372,7 +372,7 @@ exports.postCategory = async (req, res) => {
             // saveCategory3(); //1912
         }
 
-        saveCategory2();
+        // saveCategory2();
         res.send(result)
         // const result = await Category.findAll({});
         // res.send({ data: result });

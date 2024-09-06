@@ -23,14 +23,13 @@ exports.getLikes = async (req, res) => {
 };
 
 exports.postLikes = async (req, res) => {
-    console.log(">>> ", isLoginUser);
     const { productId } = req.query;
     try {
         console.log('req.query > ', req.query);
-
-        const userId = await isLoginUser(req, res);
+        const userId = req.session.userId;
+        const result = await isLoginUser(req, res);
         console.log('userId > ', userId)
-        if (!userId) return;
+        if (!result) return;
         
         const writer = await isWriter(req, productId);
         console.log("writer>> ",writer)
@@ -47,9 +46,9 @@ exports.postLikes = async (req, res) => {
             attributes: ['likesCount'],
             raw: true,
         });
-        console.log('b4 likesCount >> ', userLikes);
+        console.log('b4 likesInfo >> ', userLikes);
         if (userLikes) {
-            console.log('product, user 가 table 에 존재함.');
+            console.log('product, user 가 likes table 에 존재함.');
 
             const isAlreadyLike = await Likes.findOne({
                 where: {
@@ -97,11 +96,5 @@ exports.postLikes = async (req, res) => {
 function likesCreate(productId, userId, likesCount) {
     Likes.create(
         { productId, userId, likesCount },
-        {
-            where: {
-                productId,
-                userId,
-            },
-        }
     );
 }

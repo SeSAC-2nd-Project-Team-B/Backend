@@ -3,6 +3,7 @@ const Op = sequelize.Op;
 const { User, Product, ProductImage, Likes, Report } = require('../../models/Index');
 const { getLikes, postLikes } = require('../../service/likesService');
 const { getReport, postReportProduct } = require('../../service/reportService');
+const { isLoginUser, isWriter } = require('../../service/isLoginActive');
 
 // 구매 및 판매 및 찜 내역
 exports.buySellLikesList = async (req, res) => {
@@ -245,11 +246,31 @@ exports.postProductCheck = async (req, res) => {
     }
 };
 
-// default
-exports.postSellCheck1 = async (req, res) => {
+// 찜 내역 삭제
+exports.deleteLikesDelete = async (req, res) => {
     try {
         console.log('req.body > ', req.body);
+        const { productId } = req.query;
+        const userId = req.session.userId;
+        const result = await isLoginUser(req, res);
+
+        // if (!result) return;
+        
+        if (!result) {
+            // res.status(400).json({ message: '로그인 유저와 작성자가 일치하지 않습니다.' });
+        } else {
+            const isDeleted = await Likes.destroy({
+                where: { productId , userId },
+            });
+            console.log('삭제완료 >> ', isDeleted);
+            if (isDeleted === 1) {
+                res.send('삭제 성공 !🌟');
+            } else {
+                res.send('삭제할 데이터가 존재하지 않습니다. ');
+            }
+        }
+
     } catch (err) {
-        res.status(500).json({ message: 'getBuyList 서버 오류', err: err.message });
+        res.status(500).json({ message: 'deleteLikesDelete 서버 오류', err: err.message });
     }
 };

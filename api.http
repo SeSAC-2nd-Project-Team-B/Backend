@@ -1,5 +1,5 @@
 @server = http://localhost:8000
-@productId = 30
+@productId = 3
 
 #로그인한 유저
 @userId = 3
@@ -70,7 +70,7 @@ Content-Type: application/json ; charset=UTF-8
     "userId": {{userId}},
     "price": 5000,
     "content": "노란초록 옷 팔아요",
-    "categoryId" : 6
+    "categoryId" : 760
 
 }
 
@@ -117,7 +117,7 @@ POST {{server}}/login
 Content-Type: application/json ; charset=UTF-8
 
 {
-    "email":"user2@example.com",
+    "email":"user1@example.com",
     "password":"Userr!!12"
 }
 
