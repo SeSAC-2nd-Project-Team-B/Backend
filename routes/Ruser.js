@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const controller = require("../controller/user/Cuser");
 const controllerMoney = require("../controller/user/Cmoney");
+const controllerPassword = require("../service/chkPwService");
 const { authenticate, adminOrUser, admin } = require("../middleware/auth");
 const { validation, checkEmail, checkNickname } = require("../middleware/validation")
 
@@ -9,6 +10,9 @@ const { validation, checkEmail, checkNickname } = require("../middleware/validat
 
 // 유저 생성
 router.post(`/`, validation, controller.postUser);
+
+// 비밀 번호 확인
+router.post(`/chkPassword/:userId`, authenticate(adminOrUser), controllerPassword.chkPassword);
 
 // 머니 충전
 router.post(`/money/:userId`, authenticate(adminOrUser), controllerMoney.postMoney);
@@ -32,8 +36,8 @@ router.post(`/checkNickname`, checkNickname);
 
 
 // 특정 유저 한명 조회
-// router.get(`/:userId`, authenticate(adminOrUser), controller.getUser);
-router.get(`/:userId`, controller.getUser);
+router.get(`/:userId`, authenticate(adminOrUser), controller.getUser);
+// router.get(`/:userId`, controller.getUser);
 
 // 특정 유저 내용 수정
 router.patch(`/:userId`, authenticate(adminOrUser), validation, controller.patchUser);

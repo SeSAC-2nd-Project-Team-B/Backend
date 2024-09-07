@@ -6,6 +6,7 @@ const locationService = require('../../service/locationService');
 const activeService = require('../../service/activeService');
 const auth = require("../../middleware/auth")
 const reportService = require("../../service/reportService");
+const chkPwService = require("../../service/chkPwService");
 
 // 유저 생성 // 회원가입
 exports.postUser = async(req, res) => {
@@ -122,13 +123,12 @@ exports.patchUser = async(req, res) => {
         // 존재하는 유저인지 확인
         const user = await User.findOne({ where: { userId } });
         if (!user) return res.status(404).json({ message: '회원을 찾을 수 없습니다.' });
-        
-        const updateData = {};
-        
-        // 기존 비밀번호와 비교
-        const isMatch = await encUtil.comparePw(password, user.password);
 
-        if (!isMatch) return res.status(400).json({ message: '비밀번호가 일치하지 않습니다.' });
+        // 비밀번호 확인
+        const passwordCheck = await chkPwService.chkPasswordInPatch(userId, password);
+        if (!passwordCheck.success) return res.status(400).json({ message: passwordCheck.message });
+
+        const updateData = {};
 
         // 비밀번호 변경 
         if (newPassword) {
@@ -136,16 +136,30 @@ exports.patchUser = async(req, res) => {
             updateData.password = hashedPassword;
         }
 
-        const locationData = { depth1, depth2, depth3, depth4 };
-        const patchedLocation = await locationService.updateLocation(user.userId, locationData);
-        const patchedActive = await activeService.updateActive(user.userId, isAdmin, isActive);
+        if (depth1 || depth2 || depth3 || depth4) {
+            const locationData = { depth1, depth2, depth3, depth4 };
+            await locationService.updateLocation(user.userId, locationData);
+        }
+
+        // 관리자 권한일 경우에만 활동 상태 업데이트
+        if ((isAdmin !== undefined || isActive !== undefined) && req.isAdmin) {
+            await activeService.updateActive(user.userId, isAdmin, isActive);
+            activeUpdated = true;
+        } else {
+            return res.status(400).json({ message: '변경 권한이 없습니다.' });
+        }
 
         if (age) updateData.age = age;
         if (gender) updateData.gender = gender;
         if (nickname) updateData.nickname = nickname;
 
-        // 유저 정보 업데이트
-        await User.update(updateData, { where: { userId } });
+
+        // 업데이트할 정보가 있는지 확인 후 업데이트
+        if (activeUpdatedMessage || Object.keys(updateData).length > 0) {
+            await User.update(updateData, { where: { userId } });
+        } else {
+            return res.status(200).json({ message: '변경된 정보가 없습니다.' });
+        }
 
         return res.status(200).json({ message: '회원정보가 성공적으로 업데이트되었습니다.' });
 
@@ -153,7 +167,7 @@ exports.patchUser = async(req, res) => {
         console.log(err.message);
         return res.status(500).json({ message: '서버 오류', err: err.message });
     }
-};
+};  
 
 
 // 특정 유저 삭제
