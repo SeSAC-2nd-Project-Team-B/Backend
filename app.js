@@ -10,8 +10,9 @@ const cors = require("cors");
 
 const cookieParser = require("cookie-parser");
 const multer = require("multer");
-const sessionMiddleware = require("./middleware/sessionMiddleware");
+// const sessionMiddleware = require("./middleware/sessionMiddleware");
 const socketMiddleware = require("./middleware/socketMiddleware");
+const cors = require("cors");
 
 // dotenv.config(); // config.js와 중복부분(불러오지 못할 시 주석 해제)
 const config =
@@ -27,7 +28,7 @@ app.use(express.json());
 app.use(cors({ origin: "http://localhost:3000", credentials: true }));
 app.use("/uploads", express.static(__dirname + "/uploads"));
 app.use("/public", express.static(path.join(__dirname + "/public")));
-app.use(sessionMiddleware);
+// app.use(sessionMiddleware);
 app.use(router);
 
 socketMiddleware(server);

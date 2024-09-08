@@ -26,7 +26,7 @@ exports.postLikes = async (req, res) => {
     const { productId } = req.query;
     try {
         console.log('req.query > ', req.query);
-        const userId = req.session.userId;
+        const userId = req.userId;
         const result = await isLoginUser(req, res);
         console.log('userId > ', userId)
         if (!result) return;
