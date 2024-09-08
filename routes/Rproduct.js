@@ -1,10 +1,11 @@
 const express = require('express');
+const router = express.Router();
 const controller = require('../controller/product/Cproduct');
 const likesController = require('../service/likesService');
 const reportController = require('../service/reportService');
 const utilController = require('../utils/apiHandler');
 const { postUpProductImage } = require('../middleware/uploadImgProductMiddleware');
-const router = express.Router();
+const { authenticate, adminOrUser, admin } = require('../middleware/auth');
 
 // 기본 요청 경로 localhost:PORT/product
 
@@ -23,28 +24,29 @@ router.get('/read', controller.getProduct);
 router.get('/write', controller.getProductWrite);
 
 // 상품 등록 버튼 클릭시
-router.post('/write', postUpProductImage, controller.postProduct);
+router.post('/write', authenticate(adminOrUser), postUpProductImage, controller.postProduct);
+// router.post('/write', postUpProductImage, controller.postProduct);
 
 // 특정 상품 수정 페이지
-router.get('/update', controller.getProductUpdate);
+router.get('/update', authenticate(adminOrUser), controller.getProductUpdate);
 
 // 특정 상품 수정 버튼 클릭시
-router.patch('/update', controller.patchProductUpdate);
+router.patch('/update', authenticate(adminOrUser), controller.patchProductUpdate);
 
 // 특정 상품 삭제
-router.delete('/delete', controller.deleteProduct);
+router.delete('/delete', authenticate(adminOrUser), controller.deleteProduct);
 
 // 상품별 찜 - 전체 개수 조회
-router.get('/likes', likesController.getLikes);
+router.get('/likes', authenticate(adminOrUser), likesController.getLikes);
 
 // 상품 페이지 - 찜 버튼 클릭시
-router.post('/likes', likesController.postLikes);
+router.post('/likes', authenticate(adminOrUser), likesController.postLikes);
 
 // 상품 페이지 - 신고 버튼 클릭시
-router.post('/report', reportController.postReportProduct);
+router.post('/report', authenticate(adminOrUser), reportController.postReportProduct);
 
 // 안전거래 버튼 클릭시
-router.get('/order', controller.getOrder);
+router.get('/order', authenticate(adminOrUser), controller.getOrder);
 
 // 카테고리
 router.get('/category',controller.postCategory);

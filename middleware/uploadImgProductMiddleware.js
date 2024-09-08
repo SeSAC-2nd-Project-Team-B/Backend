@@ -85,7 +85,7 @@ exports.getProductImg = async (req, productId, type) => {
 
 exports.deleteProductImg = async function (req, productId, type) {
     const image = await ProductImage.findAll({ where: { productId } });
-    console.log("image >> ", image.length);
+    console.log("deleteProductImg >> ", image.length);
 
     try {
         // if (image.length == 0) {
@@ -98,7 +98,7 @@ exports.deleteProductImg = async function (req, productId, type) {
         //     };
         // }
         const imageFiles = image.map(a => a.dataValues.productImage);
-        console.log(">>> ", imageFiles);
+        console.log("deleteProductImg Files >>> ", imageFiles);
         
         for (i = 0; i < imageFiles.length; i++) {
             const params = {
