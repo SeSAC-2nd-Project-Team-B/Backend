@@ -117,7 +117,7 @@ exports.getProductList = async (req, res) => {
 // GET /product/read?productId=
 exports.getProduct = async (req, res) => {
     try {
-        const userId = req.session.id; //로그인한 유저
+        const userId = req.userId; //로그인한 유저
         const { productId } = req.query;
         console.log('req.query > ', req.query);
 

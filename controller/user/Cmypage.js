@@ -10,7 +10,7 @@ exports.buySellLikesList = async (req, res) => {
     try {
         // const userId = req.session.userId;
         const userId = 1;
-        console.log('req > ', req.session.userId);
+        console.log('req > ', req.userId);
 
         var { mypageList } = req.body;
         var findCol =
@@ -63,7 +63,7 @@ exports.buySellLikesList = async (req, res) => {
 exports.postPayment = async (req, res) => {
     try {
         const { productId } = req.body;
-        const buyerId = req.session.userId;
+        const buyerId = req.userId;
         console.log('req.session.id >>>  ', buyerId);
 
         const result = await Product.update(
@@ -251,7 +251,7 @@ exports.deleteLikesDelete = async (req, res) => {
     try {
         console.log('req.body > ', req.body);
         const { productId } = req.query;
-        const userId = req.session.userId;
+        const userId = req.userId;
         const result = await isLoginUser(req, res);
 
         

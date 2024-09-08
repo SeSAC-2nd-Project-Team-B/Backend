@@ -39,18 +39,18 @@ exports.postReportProduct = async (req, res) => {
         }else{
 
         const existReport = await Report.findOne({
-            where: { productId, userId: req.session.userId },
+            where: { productId, userId: req.userId },
         });
 
         // 신고 내역 확인
         if (existReport) {
             // 신고 있으면 취소
-            await Report.destroy({ where: { productId, userId: req.session.userId } });
+            await Report.destroy({ where: { productId, userId: req.userId } });
 
             return res.status(200).json({ message: `신고가 취소 되었습니다.`, Report });
         } else {
             // 신고 증가
-            await Report.create({ productId, userId: req.session.userId, reportCount: 1 });
+            await Report.create({ productId, userId: req.userId, reportCount: 1 });
             return res.status(200).json({ message: `신고가 추가 되었습니다.`, Report });
         }
     }
