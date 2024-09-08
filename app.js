@@ -9,7 +9,7 @@ const server = http.createServer(app);
 
 const cookieParser = require('cookie-parser');
 const multer = require('multer');
-const sessionMiddleware = require("./middleware/sessionMiddleware");
+// const sessionMiddleware = require("./middleware/sessionMiddleware");
 const socketMiddleware = require("./middleware/socketMiddleware");
 const cors = require('cors');
 
@@ -28,7 +28,7 @@ app.use(cors({ origin: 'http://localhost:3000', credentials: true }));
 // app.use(cors({ origin: 'http://localhost:8000', credentials: true }));
 app.use('/uploads', express.static(__dirname + '/uploads'));
 app.use('/public', express.static(path.join(__dirname + '/public')));
-app.use(sessionMiddleware);
+// app.use(sessionMiddleware);
 app.use(router);
 
 socketMiddleware(server);
