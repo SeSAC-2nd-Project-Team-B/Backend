@@ -136,7 +136,7 @@ exports.getProduct = async (req, res) => {
         console.log('reportCnt >> ', reportCnt);
 
         // 이미지 불러오기
-        const getImages = awaituploadImgProduct.getProductImg(req, productId, 'product');
+        const getImages = await uploadImgProduct.getProductImg(req, productId, 'product');
         console.log("getImages >", getImages);
 
         res.send({
@@ -178,6 +178,8 @@ exports.getProductWrite = async (req, res) => {
 exports.postProduct = async (req, res) => {
     try {
         console.log('상품 등록 버튼 클릭');
+        console.log("req.userId  >",req.userId);
+        
         const result = await isLoginUser(req, res);
 
         if (!result) {
@@ -236,7 +238,7 @@ exports.postProduct = async (req, res) => {
 };
 
 // 상품 수정 페이지
-// POST /product/update?productId=
+// GET /product/update?productId=
 exports.getProductUpdate = async (req, res) => {
     try {
         console.log('상품 수정 페이지.');

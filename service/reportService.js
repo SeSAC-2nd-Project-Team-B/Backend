@@ -27,10 +27,12 @@ exports.postReportProduct = async (req, res) => {
     const { userId, productId } = req.body; //userId : 글 작성자
 
     try {
-        const loginId = await isLoginUser(req, res);
-        console.log('loginId > ', loginId)
-        if (!loginId) return;
         
+        const userId = req.userId;
+        const result = await isLoginUser(req, res);
+        console.log('userId > ', userId)
+        if (!result) return;
+
         const writer = await isWriter(req, productId);
         console.log("writer>> ",writer)
         
