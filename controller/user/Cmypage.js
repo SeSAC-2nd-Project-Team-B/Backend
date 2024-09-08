@@ -9,7 +9,7 @@ const { isLoginUser, isWriter } = require('../../service/isLoginActive');
 exports.buySellLikesList = async (req, res) => {
     try {
         // const userId = req.session.userId;
-        const userId = 1;
+        const userId = req.userId;
         console.log('req > ', req.userId);
 
         var { mypageList } = req.body;
@@ -64,7 +64,7 @@ exports.postPayment = async (req, res) => {
     try {
         const { productId } = req.body;
         const buyerId = req.userId;
-        console.log('req.session.id >>>  ', buyerId);
+        console.log('req.userId >>>  ', buyerId);
 
         const result = await Product.update(
             { buyerId: parseInt(buyerId) },
@@ -114,8 +114,8 @@ exports.postPayment = async (req, res) => {
 // 판매 내역 - 상품 판매 수락/거절/발송완료
 exports.postSellCheck = async (req, res) => {
     try {
-        const userId = 1; // 판매자 (로그인유저)
-        // const userId = req.session.userId; //구매자
+        // const userId = 1; // 판매자 (로그인유저)
+        const userId = req.userId; //구매자
 
         // console.log("req > ",req.session.userId);
         console.log('req.body > ', req.body);
@@ -180,9 +180,9 @@ exports.postSellCheck = async (req, res) => {
 // 구매내역 - 상품확인/거절 버튼 클릭시
 exports.postProductCheck = async (req, res) => {
     try {
-        // const userId = req.session.userId ; // 구매자 (로그인한유저)
+        const userId = req.userId ; // 구매자 (로그인한유저)
         // console.log("req > ",req.session.userId);
-        const buyerId = 2; // 구매자 (로그인유저)
+        // const buyerId = 2; // 구매자 (로그인유저)
         console.log('req.body > ', req.body);
         var { productId, status, price, userId } = req.body;
         var data = status == 'yes' ? '거래(정산)완료' : '판매중';
