@@ -12,7 +12,6 @@ const cookieParser = require("cookie-parser");
 const multer = require("multer");
 // const sessionMiddleware = require("./middleware/sessionMiddleware");
 const socketMiddleware = require("./middleware/socketMiddleware");
-const cors = require("cors");
 
 // dotenv.config(); // config.js와 중복부분(불러오지 못할 시 주석 해제)
 const config =
