@@ -23,7 +23,7 @@ router.use("/room", Rroom);
 router.use("/coupon", Rcoupon);
 router.use('/product', Rproduct);
 router.use("/", Rloginout);
-router.use('/messages', Rmessage);
+router.use('/message', Rmessage);
 router.use('/mypage', Rmypage);
 router.use('/review', Rreview);
 router.use('/uploadImg', RuploadImg);
