@@ -180,11 +180,10 @@ exports.postSellCheck = async (req, res) => {
 // 구매내역 - 상품확인/거절 버튼 클릭시
 exports.postProductCheck = async (req, res) => {
     try {
-        const userId = req.userId ; // 구매자 (로그인한유저)
         // console.log("req > ",req.session.userId);
-        // const buyerId = 2; // 구매자 (로그인유저)
+        const buyerId = req.userId; // 구매자 (로그인유저)
         console.log('req.body > ', req.body);
-        var { productId, status, price, userId } = req.body;
+        var { productId, status, price, userId } = req.body; //userId : 판매자
         var data = status == 'yes' ? '거래(정산)완료' : '판매중';
         console.log('status > ', status);
         const pay = await User.findOne({
@@ -254,8 +253,6 @@ exports.deleteLikesDelete = async (req, res) => {
         const userId = req.userId;
         const result = await isLoginUser(req, res);
 
-        
-        
         if(result) {
             const isDeleted = await Likes.destroy({
                 where: { productId , userId },
