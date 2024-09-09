@@ -142,11 +142,10 @@ exports.patchUser = async(req, res) => {
         }
 
         // 관리자 권한일 경우에만 활동 상태 업데이트
+        let activeUpdatedMessage = false; // 상태 업데이트 여부를 추적
         if ((isAdmin !== undefined || isActive !== undefined) && req.isAdmin) {
             await activeService.updateActive(user.userId, isAdmin, isActive);
-            activeUpdated = true;
-        } else {
-            return res.status(400).json({ message: '변경 권한이 없습니다.' });
+            activeUpdatedMessage = true;
         }
 
         if (age) updateData.age = age;
