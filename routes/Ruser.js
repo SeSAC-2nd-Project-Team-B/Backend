@@ -4,7 +4,8 @@ const controller = require("../controller/user/Cuser");
 const controllerMoney = require("../controller/user/Cmoney");
 const controllerPassword = require("../service/chkPwService");
 const { authenticate, adminOrUser, admin } = require("../middleware/auth");
-const { validation, checkEmail, checkNickname } = require("../middleware/validation")
+const { validation, checkEmail, checkNickname } = require("../middleware/validation");
+const { updateActiveInAdminPage } = require("../service/activeService");
 
 // 기본 요청 경로 localhost:PORT/user
 
@@ -34,6 +35,8 @@ router.post(`/checkEmail`, checkEmail);
 // 닉네임 중복 체크
 router.post(`/checkNickname`, checkNickname);
 
+// 활동 상태 변경
+router.patch(`/status/:userId`, updateActiveInAdminPage);
 
 // 특정 유저 한명 조회
 router.get(`/:userId`, authenticate(adminOrUser), controller.getUser);
