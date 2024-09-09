@@ -21,7 +21,7 @@ router.get('/list', controller.getProductList);
 router.get('/read', controller.getProduct);
 
 // 상품 작성 페이지
-router.get('/write', controller.getProductWrite);
+router.get('/write', authenticate(adminOrUser), controller.getProductWrite);
 
 // 상품 등록 버튼 클릭시
 router.post('/write', authenticate(adminOrUser), postUpProductImage, controller.postProduct);
