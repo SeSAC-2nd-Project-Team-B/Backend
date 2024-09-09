@@ -23,15 +23,24 @@ exports.buySellLikesList = async (req, res) => {
                 where: {
                     [findCol]: userId,
                 },
+                include:[
+                    {
+                        model : ProductImage, 
+                        attributes: ['productImage'],
+                        limit:1,
+                    }
+                ],
                 order: [['productId', 'DESC']],
             });
             if (result.length === 0) {
-                console.log('내역이 존재하지 않습니다.');
+                const text = mypageList === 'buy' ? '구매내역이 존재하지 않습니다.':
+                '판매내역이 존재하지 않습니다.'
+                res.send(text);
             } else {
                 res.send(result);
             }
 
-            console.log('length >> ', result.length);
+            console.log(`${mypageList} count  >> `, result.length);
         } else if (mypageList === 'likes') {
             const pInfo = await Likes.findAll({
                 include: [
@@ -65,7 +74,7 @@ exports.postPayment = async (req, res) => {
         const { productId } = req.body;
         const buyerId = req.userId;
         console.log('req.userId >>>  ', buyerId);
-
+        // 구매자 정보 저장 
         const result = await Product.update(
             { buyerId: parseInt(buyerId) },
             {
@@ -73,9 +82,9 @@ exports.postPayment = async (req, res) => {
             }
         );
         if (result === 1) {
-            console.log('수정 실패');
+            console.log('상태 수정 실패');
         } else {
-            console.log('수정 완료 !🌟');
+            console.log('상태 수정 완료 !🌟');
         }
 
         // 구매자 머니 차감
