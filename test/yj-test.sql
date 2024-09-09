@@ -40,6 +40,7 @@ drop table productImage;
 select * from productImage;
 desc productImage;
 select * from product order by productId desc;
+select * from product order by ;
 delete from report where reportId>=1;
 
 SELECT * FROM `Product` AS `Product` ORDER BY `Product`.`productId` DESC LIMIT 0, 10;
@@ -52,10 +53,10 @@ select * from productImage;
 
 SELECT `User`.*, `Products`.`buyerId` AS `Products.buyerId`, `Products`.`price` AS `Products.price` FROM (SELECT `User`.`userId`, `User`.`nickname`, `User`.`email`, `User`.`password`, `User`.`gender`, `User`.`age`, `User`.`temp`, `User`.`profile_image`, `User`.`money`, `User`.`point`, `User`.`createdAt`, `User`.`updatedAt` FROM `User` AS `User` WHERE ( SELECT `buyerId` FROM `Product` AS `Products` WHERE (`Products`.`buyerId` = 3 AND `Products`.`buyerId` = `User`.`userId`) LIMIT 1 ) IS NOT NULL LIMIT 1) AS `User` INNER JOIN `Product` AS `Products` ON `User`.`userId` = `Products`.`buyerId` AND `Products`.`buyerId` = 3;
 
-SELECT Product.productId, Likes.productId FROM `Product` AS `Product` 
-LEFT OUTER JOIN `Likes` ON `Product`.`productId` = `Likes`.`productId`;
+SELECT Product.productId, productImage.productImage FROM `Product` AS `Product` 
+LEFT OUTER JOIN `productImage` ON `Product`.`productId` = `productImage`.`productId`;
 
-update user set money=100000 where userId=3;
+update user set money=100000 where userId=2;
 select * from likes;
 select * from user;
 desc user;
@@ -97,6 +98,7 @@ drop table location;
 drop table coupon;
 drop table active;
 drop table product;
+drop table category;
 drop table user;
 
 desc product;

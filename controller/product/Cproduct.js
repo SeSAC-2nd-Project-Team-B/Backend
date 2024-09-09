@@ -103,23 +103,23 @@ exports.getProductList = async (req, res) => {
             offset,
             limit: parseInt(limit),
         });
+        console.log(">>> likesCNT", likesCNT);
+        
 
         const getImages = await Product.findAll({
             attributes: [
                 'productId',
-                // 'productImage'
             ],
             include: [
                 {
                     model: ProductImage,
-                    // attributes: productImage, // 좋아요의 ID는 필요 없으므로 빈 배열
+                    attributes: ['productImage'],
+                    limit:1,
+                    // required: true,
                 },
             ],
-            // group: ['Product.productId'], // productId로 그룹화
             order: [['productId', 'DESC']],
-            raw: true,
-            // offset,
-            // limit: parseInt(limit),
+            raw: false,
         });
         console.log("getImages >> ",getImages)
 
@@ -220,14 +220,15 @@ exports.getProductWrite = async (req, res) => {
 exports.postProduct = async (req, res) => {
     try {
         console.log('상품 등록 버튼 클릭');
-        console.log("req.userId  >",req.userId);
         
         const result = await isLoginUser(req, res);
+        const userId=req.userId;
+        console.log("req.userId  >", userId);
 
         if (!result) {
             return;
         }
-        const { productName, userId, price, content, categoryId } = req.body;
+        const { productName, price, content, categoryId } = req.body;
 
         var imgFileArr = req.files;
 
@@ -428,7 +429,7 @@ exports.getOrder = async (req, res) => {
             res.send('결제 페이지로 이동합니다...');
         }
     } catch (err) {
-        res.status(500).json({ message: 'postOrder 서버 오류', err: err.message });
+        res.status(500).json({ message: 'getOrder 서버 오류', err: err.message });
     }
 };
 

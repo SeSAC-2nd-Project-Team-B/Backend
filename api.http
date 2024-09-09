@@ -1,5 +1,5 @@
 @server = http://localhost:8000
-@productId = 40
+@productId = 5
 
 #로그인한 유저
 @userId = 4
@@ -24,13 +24,13 @@ POST {{server}}/user
 Content-Type: application/json ; charset=UTF-8
 
 {
-    "nickname": "4",
-    "email": "user4@example.com",
+    "nickname": "3",
+    "email": "user3@example.com",
     "password": "Userr!!12",
     "gender": 1,  
     "age": 30,
     "money": 0,  
-    "point": 10000,  
+    "point": 100000,  
     "profile_image": null,  
     "depth1": "서울시",
     "depth2": "영등포구",
@@ -49,11 +49,11 @@ POST {{server}}/product/search
 Content-Type: application/json ; charset=UTF-8
 
 {
-    "searchKeyword" : "노란 옷"
+    "searchKeyword" : "노란"
 }
 
 ### 전체 상품 조회
-GET {{server}}/product/list?page=3&limit=10
+GET {{server}}/product/list?page=1&limit=10
 
 ### 상품 작성 페이지
 GET {{server}}/product/write
@@ -67,7 +67,7 @@ Content-Type: application/json ; charset=UTF-8
 
 {
     "productName" : "노란초록 옷",
-    "price": 5000,
+    "price": 100,
     "content": "노란초록 옷 팔아요",
     "categoryId" : 4362
 }
@@ -92,11 +92,6 @@ DELETE {{server}}/product/delete?productId=27
 
 ### 찜 클릭시
 POST {{server}}/product/likes?productId={{productId}}
-# Content-Type: application/json ; charset=UTF-8
-
-# {
-#     "userId": 1   
-# }
 
 ### 신고 클릭시
 POST {{server}}/product/report
@@ -115,7 +110,7 @@ POST {{server}}/login
 Content-Type: application/json ; charset=UTF-8
 
 {
-    "email":"user2@example.com",
+    "email":"user3@example.com",
     "password":"Userr!!12"
 }
 
