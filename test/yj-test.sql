@@ -50,7 +50,7 @@ SELECT * FROM `Product` AS `Product` ORDER BY `Product`.`productId` DESC LIMIT 0
 SELECT `ProductImage`.* FROM (SELECT * FROM (SELECT `imageId`, `productImage`, `productId` FROM `ProductImage` AS `ProductImage` WHERE `ProductImage`.`productId` = 5 LIMIT 1) AS sub UNION ALL SELECT * FROM (SELECT `imageId`, `productImage`, `productId` FROM `ProductImage` AS `ProductImage` WHERE `ProductImage`.`productId` = 1 LIMIT 1) AS sub) AS `ProductImage`;
 
 select * from product order by productId desc;
-
+select * from user;
 select * from likes;
 select * from category;
 
@@ -58,8 +58,10 @@ select * from productImage;
 
 SELECT `User`.*, `Products`.`buyerId` AS `Products.buyerId`, `Products`.`price` AS `Products.price` FROM (SELECT `User`.`userId`, `User`.`nickname`, `User`.`email`, `User`.`password`, `User`.`gender`, `User`.`age`, `User`.`temp`, `User`.`profile_image`, `User`.`money`, `User`.`point`, `User`.`createdAt`, `User`.`updatedAt` FROM `User` AS `User` WHERE ( SELECT `buyerId` FROM `Product` AS `Products` WHERE (`Products`.`buyerId` = 3 AND `Products`.`buyerId` = `User`.`userId`) LIMIT 1 ) IS NOT NULL LIMIT 1) AS `User` INNER JOIN `Product` AS `Products` ON `User`.`userId` = `Products`.`buyerId` AND `Products`.`buyerId` = 3;
 
-SELECT Product.productId, productImage.productImage FROM `Product` AS `Product` 
-LEFT OUTER JOIN `productImage` ON `Product`.`productId` = `productImage`.`productId`;
+SELECT `Product`.`productId`, `Product`.`productName`, `Product`.`userId`, `Product`.`price`, `Product`.`content`, `Product`.`categoryId`, `Product`.`viewCount`, `Product`.`status`, `Product`.`buyerId`, `Product`.`createdAt`, `Product`.`updatedAt`, `User`.`userId` AS `User.userId` FROM `Product` AS `Product` INNER JOIN `User` AS `User` ON `Product`.`userId` = `User`.`userId` AND `User`.`nickname` = '1' WHERE `Product`.`userId` IS NOT NULL;
+
+SELECT `ProductImage`.* FROM (SELECT * FROM (SELECT `imageId`, `productImage`, `productId` FROM `ProductImage` AS `ProductImage` WHERE `ProductImage`.`productId` = 6 LIMIT 1) AS sub UNION ALL SELECT * FROM (SELECT `imageId`, `productImage`, `productId` FROM `ProductImage` AS `ProductImage` WHERE `ProductImage`.`productId` = 5 LIMIT 1) AS sub UNION ALL SELECT * FROM (SELECT `imageId`, `productImage`, `productId` FROM `ProductImage` AS `ProductImage` WHERE `ProductImage`.`productId` = 4 LIMIT 1) AS sub UNION ALL SELECT * FROM (SELECT `imageId`, `productImage`, `productId` FROM `ProductImage` AS `ProductImage` WHERE `ProductImage`.`productId` = 3 LIMIT 1) AS sub UNION ALL SELECT * FROM (SELECT `imageId`, `productImage`, `productId` FROM 
+`ProductImage` AS `ProductImage` WHERE `ProductImage`.`productId` = 2 LIMIT 1) AS sub) AS `ProductImage`;
 
 update user set money=100000 where userId=2;
 select * from likes;

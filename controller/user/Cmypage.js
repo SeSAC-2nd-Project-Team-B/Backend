@@ -56,7 +56,8 @@ exports.buySellLikesList = async (req, res) => {
             if (result.length === 0) {
                 const text = mypageList === 'buy' ? '구매내역이 존재하지 않습니다.':
                 '판매내역이 존재하지 않습니다.'
-                res.send(text);
+
+                res.send(result.length);
             } else {
                 res.send(updatedProducts);
             }
