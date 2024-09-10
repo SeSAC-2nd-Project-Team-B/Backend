@@ -20,12 +20,12 @@ const isLoginUser = async(req, res) => {
 const isWriter = async (req, productId) => {
     // const session = req.session;
     const userId = req.userId;
+    const isAdmin = req.isAdmin;
 
     const find = await Product.findOne({ where : { productId, userId } })
     console.log("find >> ", find);
-    if(find) return true;
+    if (isAdmin || find) return true;
     else return false;
-    
 }
 
 module.exports = { isLoginUser, isWriter };

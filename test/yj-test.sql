@@ -40,12 +40,12 @@ drop table productImage;
 select * from productImage;
 desc productImage;
 select * from product order by productId desc;
-select * from product order by ;
 delete from report where reportId>=1;
 
 SELECT * FROM `Product` AS `Product` ORDER BY `Product`.`productId` DESC LIMIT 0, 10;
 
 select * from product order by productId desc;
+insert into productImage values(5,1,'3.png',now(),now());
 select * from likes;
 select * from category;
 
