@@ -90,11 +90,20 @@ exports.getProductList = async (req, res) => {
                 'createdAt',
                 'updatedAt',
                 [sequelize.fn('COUNT', sequelize.col('Like.likesId')), 'likeCount'], // 좋아요 개수
+                [sequelize.fn('COUNT', sequelize.col('Report.reportId')), 'reportCount'], // 신고 개수
             ],
             include: [
                 {
                     model: Likes,
                     attributes: [], // 좋아요의 ID는 필요 없으므로 빈 배열
+                },
+                {
+                    model: Report,
+                    attributes: [],
+                },
+                {
+                    model: User,
+                    attributes: ['nickname'],
                 },
             ],
             group: ['Product.productId'], // productId로 그룹화
@@ -129,13 +138,20 @@ exports.getProductList = async (req, res) => {
             time = `${year}-${month}-${day}`;
             time ? { ...item, updatedAt: time } : item;
             // console.log("time >> ", time);
-            return time ? { ...item, updatedAt: time } : item;
+            return time ? { ...item, updatedAt: time, nickname: item['User.nickname'] } : item;
         });
 
         // 이미지 불러오기
         // const getImages = await uploadImgProduct.getProductImg(req, productId, 'product');
+        const totalPages = Math.ceil(productCNT.count / limit);
 
-        res.send({ totalCount: productCNT.count, productInfo: productInfo, images: getImages });
+        res.send({
+            totalCount: productCNT.count,
+            productInfo: productInfo,
+            images: getImages,
+            totalPages: totalPages,
+            currentPage: page,
+        });
         // res.send({ totalCount: productCNT.count, productInfo: productInfo });
     } catch (err) {
         res.status(500).json({ message: 'getProductList 서버 오류', err: err.message });
@@ -168,7 +184,7 @@ exports.getProduct = async (req, res) => {
         const getImages = await uploadImgProduct.getProductImg(req, productId, 'product');
         console.log('getImages >', getImages);
 
-        let time = new Date(String(product.updatedAt));
+        let time = new Date(String(product.createdAt));
         var year = time.getFullYear();
         var month = ('0' + (1 + time.getMonth())).slice(-2);
         var day = ('0' + time.getDate()).slice(-2);
@@ -186,7 +202,7 @@ exports.getProduct = async (req, res) => {
             status: product.status,
             totalLikes: likeCnt,
             totalReport: reportCnt,
-            updatedAt: time,
+            createdAt: time,
             images: getImages,
         });
     } catch (err) {
@@ -373,7 +389,7 @@ exports.patchProductUpdate = async (req, res) => {
     }
 };
 
-// 상품 삭제 페이지 /delete?productId=""
+// 상품 삭제 페이지 /product/delete?productId=""
 exports.deleteProduct = async (req, res) => {
     try {
         console.log('req.body > ', req.query);
@@ -384,22 +400,18 @@ exports.deleteProduct = async (req, res) => {
 
         const writer = await isWriter(req, productId);
         console.log('writer>> ', writer);
-        const findImg = await uploadImgProduct.deleteProductImg(req, productId, 'product');
-        console.log('findImg > ', findImg);
-
         if (!writer) {
             res.status(400).json({ message: '로그인 유저와 작성자가 일치하지 않습니다.' });
         } else {
+            const findImg = await uploadImgProduct.deleteProductImg(req, productId, 'product');
+            console.log('findImg > ', findImg);
+
             const isDeleted = await Product.destroy({
                 where: { productId },
             });
             console.log('상품 정보 삭제완료 >> ', isDeleted);
 
-            if (isDeleted === 1) {
-                res.send('삭제 성공 !🌟');
-            } else {
-                res.send('삭제 실패 띠용!');
-            }
+            res.send('삭제 성공!');
         }
     } catch (err) {
         res.status(500).json({ message: 'deleteProduct 서버 오류', err: err.message });

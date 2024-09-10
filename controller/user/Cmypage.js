@@ -1,5 +1,4 @@
-const sequelize = require('sequelize');
-const Op = sequelize.Op;
+const { Sequelize, sequelize, DataTypes, Op } = require('sequelize');
 const { User, Product, ProductImage, Likes, Report } = require('../../models/Index');
 const { getLikes, postLikes } = require('../../service/likesService');
 const { getReport, postReportProduct } = require('../../service/reportService');
@@ -19,6 +18,8 @@ exports.buySellLikesList = async (req, res) => {
         console.log('mypageList > ', mypageList, findCol);
         if (findCol == 'nono') res.send('잘못된 인자값');
         if (mypageList === 'buy' || mypageList === 'sell') {
+            const type='product';
+
             var result = await Product.findAll({
                 where: {
                     [findCol]: userId,
@@ -32,40 +33,86 @@ exports.buySellLikesList = async (req, res) => {
                 ],
                 order: [['productId', 'DESC']],
             });
+
+            
+            
+            const jsonProducts = result.map(product => product.toJSON());
+            const jsonData = JSON.stringify(jsonProducts, null, 2)
+            console.log("result >> ", typeof jsonProducts)
+            const updatedProducts = jsonProducts.map(product => {
+                // console.log("product >> ",product);
+                
+                const profileImgUrl = `https://${process.env.S3_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/product/${product.productId}`;
+                return {
+                    ...product, // 기존의 속성들을 유지
+                    ProductImages: product.ProductImages.map(image => ({
+                        productImage: `${profileImgUrl}/${image.productImage}` // 새로운 형식으로 변경
+                    }))
+                };
+            });
+            console.log("updatedProducts > ", updatedProducts);
+            // return ;
+            
             if (result.length === 0) {
                 const text = mypageList === 'buy' ? '구매내역이 존재하지 않습니다.':
                 '판매내역이 존재하지 않습니다.'
                 res.send(text);
             } else {
-                res.send(result);
+                res.send(updatedProducts);
             }
 
             console.log(`${mypageList} count  >> `, result.length);
         } else if (mypageList === 'likes') {
-            const pInfo = await Likes.findAll({
+            ///
+            const productsWithImage = await Product.findAll({
                 include: [
                     {
-                        model: Product,
-                        attributes: ['productId', 'productName', 'price', 'status'],
+                        model: ProductImage,
+                        attributes: ['productImage'],
+                        limit: 1, // 각 Product에 대해 첫 번째 ProductImage만 가져옴
+                    },
+                    {
+                        model: Likes,
+                        attributes: [], // Likes 테이블에서 특정 속성을 가져오지 않음
                         where: {
-                            userId,
+                            productId: {
+                                [Op.ne]: null, // null이 아닌 productId만 필터링
+                            },
                         },
                     },
                 ],
+                where: {
+                    productId: {
+                        [Op.in]: Sequelize.literal(`(SELECT productId FROM Likes)`)
+                    }
+                },
+                order: [['productId', 'DESC']],
             });
-            console.log(
-                'pinfo > ',
-                pInfo.map((item) => item.Product)
-            );
 
-            if (pInfo.length === 0) {
+            const jsonProducts = productsWithImage.map(product => product.toJSON());
+            console.log("result >> ", typeof jsonProducts)
+            const updatedLikes = jsonProducts.map(product => {                
+                const profileImgUrl = `https://${process.env.S3_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/product/${product.productId}`;
+                return {
+                    ...product, // 기존의 속성들을 유지
+                    ProductImages: product.ProductImages.map(image => ({
+                        productImage: `${profileImgUrl}/${image.productImage}` // 새로운 형식으로 변경
+                    }))
+                };
+            });
+            console.log("updatedLikes > ", updatedLikes);
+            ///
+            
+            console.log('pinfo > ', updatedLikes);
+
+            if (productsWithImage.length === 0) {
                 res.send('좋아요 내역이 존재하지 않습니다.');
             } else {
-                res.send(pInfo.map((item) => item.Product));
+                res.send(updatedLikes);
             }
         }
     } catch (err) {
-        res.status(500).json({ message: 'getBuyList 서버 오류', err: err.message });
+        res.status(500).json({ message: 'buySellLikesList 서버 오류', err: err.message });
     }
 };
 // 결제하기 버튼 클릭시
