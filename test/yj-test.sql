@@ -19,6 +19,7 @@ insert into category values(3,"상의",2,3,now(),now());
 drop table category;
 desc category;
 desc product;
+desc location;
 desc user;
 select count(*) from category;
 
@@ -32,6 +33,7 @@ desc category;
 insert into product values(30,"물",1,10000,"물 팔아요",0,"판매중",null,now(),now());
 desc likes;
 select * from user;
+select * from location;
 select * from active;
 select * from likes;
 update active set isActive=0 where userId=4;
@@ -44,8 +46,11 @@ delete from report where reportId>=1;
 
 SELECT * FROM `Product` AS `Product` ORDER BY `Product`.`productId` DESC LIMIT 0, 10;
 
+
+SELECT `ProductImage`.* FROM (SELECT * FROM (SELECT `imageId`, `productImage`, `productId` FROM `ProductImage` AS `ProductImage` WHERE `ProductImage`.`productId` = 5 LIMIT 1) AS sub UNION ALL SELECT * FROM (SELECT `imageId`, `productImage`, `productId` FROM `ProductImage` AS `ProductImage` WHERE `ProductImage`.`productId` = 1 LIMIT 1) AS sub) AS `ProductImage`;
+
 select * from product order by productId desc;
-insert into productImage values(5,1,'3.png',now(),now());
+
 select * from likes;
 select * from category;
 
@@ -71,6 +76,8 @@ alter table user add column profileImage char;
 
 alter table product add foreign key(buyerId) references user(userId);
 
+
+
 use sesac_project_2;
 drop table likes;
 
@@ -81,6 +88,16 @@ SELECT `User`.*, `Products`.`productId` AS `Products.productId`, `Products`.`buy
 `Product` AS `Products` ON `User`.`userId` = `Products`.`buyerId` AND `Products`.`userId` = 1;
 
 insert into likes values(3,8,1,0,now(),now());
+
+insert into productImage values(1,1,'1-1.png',now(),now());
+insert into productImage values(2,1,'1-2.png',now(),now());
+
+insert into productImage values(3,2,'2-1.png',now(),now());
+insert into productImage values(4,2,'2-2.png',now(),now());
+insert into productImage values(5,3,'3-1.png',now(),now());
+insert into productImage values(6,3,'3-2.png',now(),now());
+
+
 update likes set likesid=1 where productId=8;
 
 drop table category;

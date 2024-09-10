@@ -8,7 +8,9 @@ dotenv.config();
 
 exports.getNproductPrice = async (req, res) => {
 
-    const query = req;
+    const query = req.query.query;
+    console.log("query > ",query);
+    
     
     const url = 'https://openapi.naver.com/v1/search/shop.json?query=' + encodeURIComponent(query);
     const ClientID = process.env.NAVER_CLIENT_ID;
@@ -42,11 +44,12 @@ exports.getNproductPrice = async (req, res) => {
           mallName: newProduct.mallName
         };
       })
-      return extractData;
+
       
-      if(Object.keys(extractData).length === 0){  
-        return '해당 키워드로 검색된 상품의 최저가 정보가 없습니다.😥';
+      if(extractData.length === 0){  
+        res.send('해당 키워드로 검색된 상품의 최저가 정보가 없습니다.😥');
       }
+      res.send(extractData);
     } catch (err) {
       return `error : ${err.message}`
 

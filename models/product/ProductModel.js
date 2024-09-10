@@ -58,6 +58,7 @@ const ProductModel = (sequelize, DataTypes) => {
     );
     Product.associate = function (models) {
         Product.belongsTo(models.User, { foreignKey: 'userId' });
+        Product.belongsTo(models.Location, { foreignKey: 'userId' });
         Product.hasMany(models.ProductHashtag, { foreignKey: 'productId' });
         Product.hasMany(models.ProductImage, { foreignKey: 'productId' });
         Product.belongsTo(models.Category, { foreignKey: 'categoryId' });
