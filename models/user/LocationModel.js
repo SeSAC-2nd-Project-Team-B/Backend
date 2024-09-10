@@ -46,6 +46,7 @@ const LocationModel = (sequelize, DataTypes) => {
     // 관계 설정
     Location.associate = (models) => {
         Location.belongsTo(models.User, { foreignKey: 'userId',  onDelete: 'CASCADE' }); // 다대일: 각 위치는 하나의 유저
+        Location.hasMany(models.Product, { foreignKey: 'userId',  sourceKey: 'userId', onDelete: 'CASCADE' }); // 다대일: 각 위치는 하나의 유저
     };
 
     return Location;

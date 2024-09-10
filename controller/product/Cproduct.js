@@ -5,6 +5,7 @@ const {
     Active,
     Product,
     ProductImage,
+    Location,
     Category,
     NewProduct,
     Review,
@@ -27,39 +28,47 @@ let searchWord = '';
 // 검색 버튼 클릭시
 exports.postSearch = async (req, res) => {
     try {
-        console.log('searchKeyword: ', req.body);
-        const { searchKeyword } = req.body;
-        searchWord = searchKeyword;
-        const url = 'https://openapi.naver.com/v1/search/shop.json?query=' + encodeURIComponent(searchKeyword);
-        const ClientID = process.env.NAVER_CLIENT_ID;
-        const ClientSecret = process.env.NAVER_CLIENT_SECRET;
-
-        const result = await Product.findAll({
-            where: {
-                productName: {
-                    [Op.like]: `%${searchKeyword}%`,
+        const { searchKeyword, searchType } = req.body;
+        let result='';
+        if (searchType === 'name') {
+            result = await Product.findAll({
+                where: {
+                    productName: {
+                        [Op.like]: `%${searchKeyword}%`,
+                    },
                 },
-            },
-            order: [['productId', 'DESC']],
-        });
-
-        // 네이버에서 새상품 가격 받아오기
-        console.log('searchWord > ', searchWord);
-
-        const newData = await getNproductPrice(searchWord);
-        console.log('newData > ', newData);
-
-        if (result.length) {
-            res.send({
-                result: result,
-                newData,
+                order: [['productId', 'DESC']],
             });
+        } else if (searchType === 'seller'){
+            result = await Product.findAll({
+                include: [
+                    {
+                        model: User,
+                        attributes: ['userId','nickname'], // userId, nickname
+                        where: {
+                            nickname: {
+                                [Op.eq]: searchKeyword // nickname이 일치하는 경우
+                            }
+                        }
+                    }
+                ],
+                where: {
+                    userId: {
+                        [Op.ne]: null // userId가 null이 아닌 경우 (필요에 따라 조정 가능)
+                    }
+                }
+            });
+        }else{
+            res.send(`${searchType} 은 존재하지 않는 searchType 입니다.`);
+        }
+        if (result.length) {
+            res.send({ result });
         } else {
             res.send({ message: '해당 키워드에 맞는 중고리스트가 존재하지 않습니다.' });
         }
     } catch (err) {
         console.log('error : ', err);
-        // res.status(500).json({ message: 'postSearch 서버 오류', err: err.message });
+        res.status(500).json({ message: 'postSearch 서버 오류', err: err.message });
     }
 };
 
@@ -68,7 +77,7 @@ exports.getProductList = async (req, res) => {
     try {
         // 페이지 네이션
         let { page, limit } = req.query; // 요청 페이지 넘버
-
+        const userId = req.userId; //로그인한 유저
         let offset = (page - 1) * limit; // 시작 위치 : 0
         let listCnt = parseInt(offset) + parseInt(limit - 1);
 
@@ -105,6 +114,10 @@ exports.getProductList = async (req, res) => {
                     model: User,
                     attributes: ['nickname'],
                 },
+                {
+                    model: Location,
+                    attributes: ['depth1', 'depth2', 'depth3'],
+                },
             ],
             group: ['Product.productId'], // productId로 그룹화
             order: [['productId', 'DESC']],
@@ -112,22 +125,31 @@ exports.getProductList = async (req, res) => {
             offset,
             limit: parseInt(limit),
         });
+
         console.log('>>> likesCNT', likesCNT);
 
-        const getImages = await Product.findAll({
+        var result = await Product.findAll({
             attributes: ['productId'],
             include: [
                 {
                     model: ProductImage,
                     attributes: ['productImage'],
                     limit: 1,
-                    // required: true,
                 },
             ],
             order: [['productId', 'DESC']],
-            raw: false,
         });
-        console.log('getImages >> ', getImages);
+        const jsonProducts = result.map((product) => product);
+        console.log('result >> ', typeof jsonProducts);
+        const updatedProducts = jsonProducts.map((product) => {
+            const productId = product.dataValues.productId;
+            const profileImgUrl = `https://${process.env.S3_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/product/${productId}`;
+            return product.dataValues.ProductImages.map((image) => ({
+                productId: `${productId}`,
+                productImage: `${profileImgUrl}/${image.productImage}`,
+            }));
+        });
+        console.log('updatedProducts > ', updatedProducts);
 
         const productInfo = likesCNT.map((item) => {
             let time = item.updatedAt;
@@ -148,7 +170,7 @@ exports.getProductList = async (req, res) => {
         res.send({
             totalCount: productCNT.count,
             productInfo: productInfo,
-            images: getImages,
+            images: updatedProducts,
             totalPages: totalPages,
             currentPage: page,
         });
@@ -164,14 +186,46 @@ exports.getProduct = async (req, res) => {
     try {
         const userId = req.userId; //로그인한 유저
         const { productId } = req.query;
-        console.log('req.query > ', req.query);
+        console.log(`userId > ${userId}  /  req.query > `, req.query);
 
         console.log('1개 상품 보기', productId);
 
         // 상품 정보 불러오기
         const product = await Product.findOne({
-            where: { productId },
+            attributes: [
+                'productId',
+                'productName',
+                'userId',
+                'price',
+                'content',
+                'categoryId',
+                'viewCount',
+                'status',
+                'buyerId',
+                'createdAt',
+                'updatedAt',
+            ],
+            include: [
+                {
+                    model: User,
+                    attributes: ['nickname'],
+                },
+                {
+                    model: Location,
+                    attributes: ['depth1', 'depth2', 'depth3'],
+                },
+            ],
         });
+
+        const likes = await Likes.findOne({
+            where: {
+                productId,
+                userId,
+            },
+        });
+        console.log('product.location.depth1 > ', product.Location.dataValues);
+
+        console.log(' do i push this product likes? > ', likes);
         // 찜 개수 불러오기
         const likeCnt = await getLikes(productId);
         console.log('likesCnt >> ', likeCnt);
@@ -200,6 +254,8 @@ exports.getProduct = async (req, res) => {
             categoryId: product.categoryId,
             viewCount: product.viewCount,
             status: product.status,
+            isLike: likes.likesCount,
+            location: product.Location.dataValues,
             totalLikes: likeCnt,
             totalReport: reportCnt,
             createdAt: time,

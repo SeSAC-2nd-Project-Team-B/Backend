@@ -1,5 +1,5 @@
 @server = http://localhost:8000
-@productId = 5
+@productId = 3
 
 #로그인한 유저
 @userId = 4
@@ -24,8 +24,8 @@ POST {{server}}/user
 Content-Type: application/json ; charset=UTF-8
 
 {
-    "nickname": "3",
-    "email": "user3@example.com",
+    "nickname": "2",
+    "email": "user2@example.com",
     "password": "Userr!!12",
     "gender": 1,  
     "age": 30,
@@ -41,7 +41,7 @@ Content-Type: application/json ; charset=UTF-8
 }
 
 ### 새상품 가격 받아오기
-GET {{server}}/product/search/api
+GET {{server}}/product/search/api?query='아이폰'
 
 
 ### 검색 버튼 클릭시
@@ -49,7 +49,8 @@ POST {{server}}/product/search
 Content-Type: application/json ; charset=UTF-8
 
 {
-    "searchKeyword" : "노란"
+    "searchKeyword": "1",
+    "searchType": "seller"
 }
 
 ### 전체 상품 조회
@@ -110,9 +111,15 @@ POST {{server}}/login
 Content-Type: application/json ; charset=UTF-8
 
 {
-    "email":"user3@example.com",
+    "email":"user2@example.com",
     "password":"Userr!!12"
 }
+
+# {
+#     "email":"yejin@abc.com",
+#     "password":"Test1!"
+# }
+
 
 ### 카테고리 불러오기
 GET  {{server}}/product/category
