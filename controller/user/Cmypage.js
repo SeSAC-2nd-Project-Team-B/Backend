@@ -107,7 +107,7 @@ exports.buySellLikesList = async (req, res) => {
             console.log('pinfo > ', updatedLikes);
 
             if (productsWithImage.length === 0) {
-                res.send('좋아요 내역이 존재하지 않습니다.');
+                res.send(productsWithImage.length);
             } else {
                 res.send(updatedLikes);
             }
