@@ -64,7 +64,6 @@ exports.buySellLikesList = async (req, res) => {
 
             console.log(`${mypageList} count  >> `, result.length);
         } else if (mypageList === 'likes') {
-            ///
             const productsWithImage = await Product.findAll({
                 include: [
                     {
@@ -76,9 +75,7 @@ exports.buySellLikesList = async (req, res) => {
                         model: Likes,
                         attributes: [], // Likes 테이블에서 특정 속성을 가져오지 않음
                         where: {
-                            productId: {
-                                [Op.ne]: null, // null이 아닌 productId만 필터링
-                            },
+                            userId
                         },
                     },
                 ],
@@ -116,6 +113,7 @@ exports.buySellLikesList = async (req, res) => {
         res.status(500).json({ message: 'buySellLikesList 서버 오류', err: err.message });
     }
 };
+
 // 결제하기 버튼 클릭시
 exports.postPayment = async (req, res) => {
     try {
@@ -174,133 +172,164 @@ exports.postSellCheck = async (req, res) => {
         // const userId = 1; // 판매자 (로그인유저)
         const userId = req.userId; //구매자
 
-        // console.log("req > ",req.session.userId);
         console.log('req.body > ', req.body);
 
-        var { productId, status } = req.body;
+        const { productId, status } = req.body;
 
-        if (status == 'yes') {
+        let result;
+        let updatedProduct;
+
+        if (status === 'yes') {
             console.log('판매자가 수락 버튼 클릭');
 
             // 상품 상태 변경
-            var result = await Product.update(
+            result = await Product.update(
                 { status: '배송대기중' },
-                {
-                    where: { productId, userId },
-                }
+                { where: { productId, userId } }
             );
-            var val = result == 1 ? `${status} 상태값 변경 성공` : '상태값 변경 실패';
+            
+            if (result == 1) {
+                updatedProduct = await Product.findOne({ where: { productId } });
+                res.json({ message: '상태값 변경 성공', product: updatedProduct });
+                console.log('updatedProduct >>>>>',updatedProduct);
+                
+            } else {
+                res.status(400).json({ message: '상태값 변경 실패' });
+            }
+            
         } else if (status === 'no') {
             console.log('판매자가 거절 버튼 클릭');
-            const result = await Product.update(
+            
+            result = await Product.update(
                 { status: '판매중', buyerId: null },
-                {
-                    where: { productId, userId },
-                }
+                { where: { productId, userId } }
             );
-            res.send('판매자가 거절버튼을 클릭하였습니다.');
+            
+            if (result == 1) {
+                updatedProduct = await Product.findOne({ where: { productId } });
+                res.json({ message: '상태값 변경 성공', product: updatedProduct });
+            } else {
+                res.status(400).json({ message: '상태값 변경 실패' });
+            }
+            
         } else if (status === 'send') {
             console.log('판매자가 발송완료 버튼 클릭');
-            const result = await Product.update(
+
+            result = await Product.update(
                 { status: '배송중' },
-                {
-                    where: { productId, userId },
-                }
+                { where: { productId, userId } }
             );
 
-            val = result == 1 ? `${status} 상태값 변경 성공` : '상태값 변경 실패';
-            // 30초 뒤에 배송완료
-            const sleep = (delay) => new Promise((resolve) => setTimeout(resolve, delay));
+            if (result == 1) {
+                console.log('배송 시작');
+                const sleep = (delay) => new Promise((resolve) => setTimeout(resolve, delay));
+                await sleep(10000); // 10초 후에 배송 완료 상태로 변경
 
-            console.log('배송 시작');
-            await sleep(10000); // 배송상태 10초 후 변경
-
-            console.log('배송 완료');
-
-            // 상품 상태 변경
-            const ch = await Product.update(
-                { status: '배송완료' },
-                {
-                    where: { productId, userId },
+                console.log('배송 완료');
+                
+                const ch = await Product.update(
+                    { status: '배송완료' },
+                    { where: { productId, userId } }
+                );
+                
+                if (ch == 1) {
+                    updatedProduct = await Product.findOne({ where: { productId } });
+                    res.json({ message: '상태값 변경 성공', product: updatedProduct });
+                } else {
+                    res.status(400).json({ message: '상태값 변경 실패' });
                 }
-            );
-            val = ch == 1 ? `${status} 상태값 변경 성공` : '상태값 변경 실패';
-            res.send(val);
+            } else {
+                res.status(400).json({ message: '상태값 변경 실패' });
+            }
+
         } else {
-            res.send(`${status}는 잘못된 인자값 입니다.(yes/no)만 입력필요`);
+            res.status(400).json({ message: `${status}는 잘못된 인자값 입니다.(yes/no)만 입력필요` });
         }
     } catch (err) {
-        res.status(500).json({ message: 'postSellCheck 서버 오류 : 구매자 정보가 없습니다. ', err: err.message });
+        res.status(500).json({ message: 'postSellCheck 서버 오류: 구매자 정보가 없습니다.', err: err.message });
     }
 };
+
 
 // 구매내역 - 상품확인/거절 버튼 클릭시
 exports.postProductCheck = async (req, res) => {
     try {
-        // console.log("req > ",req.session.userId);
         const buyerId = req.userId; // 구매자 (로그인유저)
         console.log('req.body > ', req.body);
-        var { productId, status, price, userId } = req.body; //userId : 판매자
-        var data = status == 'yes' ? '거래(정산)완료' : '판매중';
+
+        const { productId, status, price, userId } = req.body; // userId : 판매자
+        const data = status === 'yes' ? '거래(정산)완료' : '판매중';
+
         console.log('status > ', status);
+
         const pay = await User.findOne({
             include: [
                 {
                     model: Product,
                     attributes: ['buyerId', 'price', 'userId'],
-                    where: {
-                        userId,
-                    },
+                    where: { userId },
                 },
             ],
             raw: true,
         });
+
         console.log('pay > ', pay.userId, pay.money, pay['Products.userId']);
+
+        let result;
+        let updatedProduct;
 
         if (status === 'yes') {
             console.log('구매자가 상품 확인 완료 버튼 클릭');
 
-            const moneyToSeller = await User.increment(
+            // 판매자에게 돈을 정산
+            await User.increment(
                 { money: parseInt(pay['Products.price']) },
-                {
-                    where: { userId: pay['Products.userId'] },
-                }
+                { where: { userId: pay['Products.userId'] } }
             );
 
             // 상품 상태 변경
-            const result = await Product.update(
+            result = await Product.update(
                 { status: data },
-                {
-                    where: { productId, buyerId },
-                }
+                { where: { productId, buyerId } }
             );
-            val = result == 1 ? `${status} 상태값 변경 성공` : '상태값 변경 실패';
+
+            if (result == 1) {
+                updatedProduct = await Product.findOne({ where: { productId } });
+                res.json({ message: '상태값 변경 성공', product: updatedProduct });
+            } else {
+                res.status(400).json({ message: '상태값 변경 실패' });
+            }
+
         } else if (status === 'no') {
-            //거절 클릭시
             console.log('구매자가 거절 버튼 클릭');
-            const moneyToBuyer = await User.increment(
+
+            // 구매자에게 돈을 반환
+            await User.increment(
                 { money: parseInt(pay['Products.price']) },
-                {
-                    where: { userId: pay.userId },
-                }
+                { where: { userId: pay.userId } }
             );
 
             // 상품 상태 변경
-            const result = await Product.update(
+            result = await Product.update(
                 { status: data },
-                {
-                    where: { productId, buyerId },
-                }
+                { where: { productId, buyerId } }
             );
-            val = result == 1 ? `${status} 상태값 변경 성공` : '상태값 변경 실패';
-            res.send(val);
+
+            if (result == 1) {
+                updatedProduct = await Product.findOne({ where: { productId } });
+                res.json({ message: '상태값 변경 성공', product: updatedProduct });
+            } else {
+                res.status(400).json({ message: '상태값 변경 실패' });
+            }
+
         } else {
-            res.send(`${data}는 잘못된 인자값 입니다.(yes/no)만 입력필요`);
+            res.status(400).json({ message: `${data}는 잘못된 인자값 입니다. (yes/no만 입력 필요)` });
         }
     } catch (err) {
         res.status(500).json({ message: 'postProductCheck 서버 오류', err: err.message });
     }
 };
+
 
 // 찜 내역 삭제
 exports.deleteLikesDelete = async (req, res) => {
