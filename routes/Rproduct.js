@@ -26,13 +26,12 @@ router.get('/write', authenticate(adminOrUser), controller.getProductWrite);
 
 // 상품 등록 버튼 클릭시
 router.post('/write', authenticate(adminOrUser), postUpProductImage, controller.postProduct);
-// router.post('/write', postUpProductImage, controller.postProduct);
 
 // 특정 상품 수정 페이지
 router.get('/update', authenticate(adminOrUser), controller.getProductUpdate);
 
 // 특정 상품 수정 버튼 클릭시
-router.patch('/update', authenticate(adminOrUser), controller.patchProductUpdate);
+router.post('/update', authenticate(adminOrUser), postUpProductImage, controller.postProductUpdate);
 
 // 특정 상품 삭제
 router.delete('/delete', authenticate(adminOrUser), controller.deleteProduct);
