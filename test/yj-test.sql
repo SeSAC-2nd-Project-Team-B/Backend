@@ -39,13 +39,16 @@ select * from likes;
 update active set isActive=0 where userId=4;
 select * from report;
 drop table productImage;
-select * from productImage;
+select * from productImage order by imageId desc;
 desc productImage;
 select * from product order by productId desc;
 select * from category;
 delete from report where reportId>=1;
 
 SELECT * FROM `Product` AS `Product` ORDER BY `Product`.`productId` DESC LIMIT 0, 10;
+
+SELECT * FROM `Likes` AS `Likes` INNER JOIN `Product` AS `Product` 
+ON `Likes`.`productId` = `Product`.`productId` AND `Product`.`userId` = 2;
 
 
 SELECT `ProductImage`.* FROM (SELECT * FROM (SELECT `imageId`, `productImage`, `productId` FROM `ProductImage` AS `ProductImage` WHERE `ProductImage`.`productId` = 5 LIMIT 1) AS sub UNION ALL SELECT * FROM (SELECT `imageId`, `productImage`, `productId` FROM `ProductImage` AS `ProductImage` WHERE `ProductImage`.`productId` = 1 LIMIT 1) AS sub) AS `ProductImage`;
@@ -61,8 +64,10 @@ SELECT `User`.*, `Products`.`buyerId` AS `Products.buyerId`, `Products`.`price` 
 
 SELECT `Product`.`productId`, `Product`.`productName`, `Product`.`userId`, `Product`.`price`, `Product`.`content`, `Product`.`categoryId`, `Product`.`viewCount`, `Product`.`status`, `Product`.`buyerId`, `Product`.`createdAt`, `Product`.`updatedAt`, `User`.`userId` AS `User.userId` FROM `Product` AS `Product` INNER JOIN `User` AS `User` ON `Product`.`userId` = `User`.`userId` AND `User`.`nickname` = '1' WHERE `Product`.`userId` IS NOT NULL;
 
-SELECT `ProductImage`.* FROM (SELECT * FROM (SELECT `imageId`, `productImage`, `productId` FROM `ProductImage` AS `ProductImage` WHERE `ProductImage`.`productId` = 6 LIMIT 1) AS sub UNION ALL SELECT * FROM (SELECT `imageId`, `productImage`, `productId` FROM `ProductImage` AS `ProductImage` WHERE `ProductImage`.`productId` = 5 LIMIT 1) AS sub UNION ALL SELECT * FROM (SELECT `imageId`, `productImage`, `productId` FROM `ProductImage` AS `ProductImage` WHERE `ProductImage`.`productId` = 4 LIMIT 1) AS sub UNION ALL SELECT * FROM (SELECT `imageId`, `productImage`, `productId` FROM `ProductImage` AS `ProductImage` WHERE `ProductImage`.`productId` = 3 LIMIT 1) AS sub UNION ALL SELECT * FROM (SELECT `imageId`, `productImage`, `productId` FROM 
-`ProductImage` AS `ProductImage` WHERE `ProductImage`.`productId` = 2 LIMIT 1) AS sub) AS `ProductImage`;
+SELECT * FROM `Product` 
+INNER JOIN `Likes` AS `Like` 
+ON `Product`.`productId` = `Like`.`productId` AND `Like`.`productId` IS NOT NULL 
+WHERE `Product`.`productId` IN (SELECT productId FROM Likes) AND `Product`.`userId` = 3;
 
 update user set money=100000 where userId=2;
 select * from likes;

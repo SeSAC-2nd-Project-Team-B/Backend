@@ -9,8 +9,7 @@ const { authenticate, adminOrUser, admin } = require('../middleware/auth');
 
 // 기본 요청 경로 localhost:PORT/product
 
-
-// 새상품 정보 받아오기 
+// 새상품 정보 받아오기
 router.get('/search/api', utilController.getNproductPrice);
 
 // 검색 버튼 클릭시 -닉네임/상품 선택하여 검색 가능
@@ -20,7 +19,7 @@ router.post('/search', controller.postSearch);
 router.get('/list', controller.getProductList);
 
 // 상품 상세 페이지
-router.get('/read', authenticate(adminOrUser), controller.getProduct);
+router.get('/read', controller.getProduct);
 
 // 상품 작성 페이지
 router.get('/write', authenticate(adminOrUser), controller.getProductWrite);
@@ -51,6 +50,6 @@ router.post('/report', authenticate(adminOrUser), reportController.postReportPro
 router.get('/order', authenticate(adminOrUser), controller.getOrder);
 
 // 카테고리
-router.get('/category',controller.postCategory);
+router.get('/category', controller.postCategory);
 
 module.exports = router;

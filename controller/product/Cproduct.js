@@ -29,7 +29,7 @@ let searchWord = '';
 exports.postSearch = async (req, res) => {
     try {
         const { searchKeyword, searchType } = req.body;
-        let result='';
+        let result = '';
         if (searchType === 'name') {
             result = await Product.findAll({
                 where: {
@@ -39,26 +39,26 @@ exports.postSearch = async (req, res) => {
                 },
                 order: [['productId', 'DESC']],
             });
-        } else if (searchType === 'seller'){
+        } else if (searchType === 'seller') {
             result = await Product.findAll({
                 include: [
                     {
                         model: User,
-                        attributes: ['userId','nickname'], // userId, nickname
+                        attributes: ['userId', 'nickname'], // userId, nickname
                         where: {
                             nickname: {
-                                [Op.eq]: searchKeyword // nickname이 일치하는 경우
-                            }
-                        }
-                    }
+                                [Op.eq]: searchKeyword, // nickname이 일치하는 경우
+                            },
+                        },
+                    },
                 ],
                 where: {
                     userId: {
-                        [Op.ne]: null // userId가 null이 아닌 경우 (필요에 따라 조정 가능)
-                    }
-                }
+                        [Op.ne]: null, // userId가 null이 아닌 경우 (필요에 따라 조정 가능)
+                    },
+                },
             });
-        }else{
+        } else {
             res.send(`${searchType} 은 존재하지 않는 searchType 입니다.`);
         }
         if (result.length) {
@@ -216,13 +216,17 @@ exports.getProduct = async (req, res) => {
                 },
             ],
         });
-
-        const likes = await Likes.findOne({
-            where: {
-                productId,
-                userId,
-            },
-        });
+        if (userId) {
+            const likes = await Likes.findOne({
+                where: {
+                    productId,
+                    userId,
+                },
+            });
+        }
+        else{
+            likes=0;
+        }
         console.log('product.location.depth1 > ', product.Location.dataValues);
 
         console.log(' do i push this product likes? > ', likes);
