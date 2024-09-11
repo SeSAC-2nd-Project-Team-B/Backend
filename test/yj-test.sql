@@ -30,7 +30,7 @@ delete  from category where categoryId>=760;
 delete  from product where productId>=1;
 
 desc category;
-insert into product values(30,"물",1,10000,"물 팔아요",0,"판매중",null,now(),now());
+insert into product values(1,"물",3,100,"물 팔아요",0,"판매중",null,now(),now());
 desc likes;
 select * from user;
 select * from location;
@@ -42,6 +42,7 @@ drop table productImage;
 select * from productImage;
 desc productImage;
 select * from product order by productId desc;
+select * from category;
 delete from report where reportId>=1;
 
 SELECT * FROM `Product` AS `Product` ORDER BY `Product`.`productId` DESC LIMIT 0, 10;

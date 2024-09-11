@@ -21,7 +21,7 @@ exports.postUpProductImage = multer({
 
         key: async (req, file, cb) => {
             try {
-
+                console.log(">>> multer middleware 들어옴 >>> ")
                 let lastProductId = await Product.findOne({
                     order: [['createdAt', 'DESC']],
                     attributes: ['productId'],
@@ -45,16 +45,7 @@ exports.postUpProductImage = multer({
 
     limits: { fileSize: 100 * 1024 * 1024 }, //업로드 크기 제한
 }).fields([
-    { name: 'productImg1', maxCount: 1 },
-    { name: 'productImg2', maxCount: 1 },
-    { name: 'productImg3', maxCount: 1 },
-    { name: 'productImg4', maxCount: 1 },
-    { name: 'productImg5', maxCount: 1 },
-    { name: 'productImg6', maxCount: 1 },
-    { name: 'productImg7', maxCount: 1 },
-    { name: 'productImg8', maxCount: 1 },
-    { name: 'productImg9', maxCount: 1 },
-    { name: 'productImg10', maxCount: 1 },
+    { name: 'productImg', maxCount: 10 }
 ]);
 
 

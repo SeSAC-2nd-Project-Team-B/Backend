@@ -288,7 +288,6 @@ exports.getProductWrite = async (req, res) => {
 exports.postProduct = async (req, res) => {
     try {
         console.log('상품 등록 버튼 클릭');
-
         const result = await isLoginUser(req, res);
         const userId = req.userId;
         console.log('req.userId  >', userId);
