@@ -38,11 +38,11 @@ exports.buySellLikesList = async (req, res) => {
                     {
                         model: Product,
                         attributes: ['productId', 'productName', 'price', 'status'],
-                        where: {
-                            userId,
-                        },
                     },
                 ],
+                where: {
+                    userId,
+                },
             });
             console.log(
                 'pinfo > ',
@@ -226,6 +226,7 @@ exports.postProductCheck = async (req, res) => {
                 {
                     where: { userId: pay.userId },
                 }
+
             );
 
             // 상품 상태 변경

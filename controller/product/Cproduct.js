@@ -221,13 +221,13 @@ exports.postProduct = async (req, res) => {
     try {
         console.log('상품 등록 버튼 클릭');
         console.log("req.userId  >",req.userId);
-        
+        const userId = req.userId;
         const result = await isLoginUser(req, res);
 
         if (!result) {
             return;
         }
-        const { productName, userId, price, content, categoryId } = req.body;
+        const { productName, price, content, categoryId } = req.body;
 
         var imgFileArr = req.files;
 
