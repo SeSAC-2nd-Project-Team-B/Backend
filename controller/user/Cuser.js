@@ -1,5 +1,5 @@
 const db = require('../../models/Index');
-const { User, Location, Active } = require('../../models/Index');
+const { User, Location, Active, Product } = require('../../models/Index');
 const { Op } = require('sequelize');
 const encUtil = require("../../utils/encrypt");
 const locationService = require('../../service/locationService');
@@ -223,6 +223,10 @@ exports.getUserByToken = async (req, res) => {
         {
             model: Active,
             attributes: ['isAdmin', 'isActive']
+        },
+        {
+            model: Product,
+            attributes: ['productName']
         }
     ]   
   }

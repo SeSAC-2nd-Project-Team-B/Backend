@@ -30,6 +30,26 @@ exports.updateActive = async (userId, isAdmin, isActive) => {
 };
 
 
+exports.updateActiveInAdminPage = async (req, res) => {
+    try {
+        const userId = req.params.userId;
+        const isActive = req.body.isActive;
+
+    await Active.update(
+        { isActive },
+        { where: { userId }}
+    );
+
+    return res.status(200).json({ message: '유저 상태가 성공적으로 변경되었습니다.' });
+    } catch (err) {
+        console.log(err.message);
+        res.status(500).json({ message: '서버 오류', err: err.message });
+    }
+    
+
+}
+
+
 exports.checkActive = async (userId) => {
     const activeUser = await Active.findOne({ where: { userId } });
     if (!activeUser) {

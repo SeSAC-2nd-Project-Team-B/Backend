@@ -1,5 +1,5 @@
 @server = http://localhost:8000
-@productId = 3
+@productId = 41
 
 #로그인한 유저
 @userId = 3 
@@ -10,17 +10,13 @@ POST {{server}}/login
 Content-Type: application/json ; charset=UTF-8
 
 {
-    "email":"user1@example.com",
+    "email":"user2@example.com",
     "password":"Userr!!12"
 }
 
 ### 찜 내역 삭제
 DELETE  {{server}}/mypage/likesdelete?productId={{productId}}
 Content-Type: application/json ; charset=UTF-8
-
-
-
-
 
 ### 결제페이지에서 결제 하기 버튼 클릭시 
 POST {{server}}/mypage/payment
