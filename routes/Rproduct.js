@@ -32,7 +32,7 @@ router.post('/write', authenticate(adminOrUser), postUpProductImage, controller.
 router.get('/update', authenticate(adminOrUser), controller.getProductUpdate);
 
 // 특정 상품 수정 버튼 클릭시
-router.patch('/update', authenticate(adminOrUser), controller.patchProductUpdate);
+router.post('/updated', authenticate(adminOrUser), postUpProductImage, controller.postProductUpdate);
 
 // 특정 상품 삭제
 router.delete('/delete', authenticate(adminOrUser), controller.deleteProduct);
