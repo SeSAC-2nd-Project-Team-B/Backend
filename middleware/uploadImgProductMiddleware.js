@@ -24,7 +24,7 @@ exports.postUpProductImage = (type) => multer({
                 console.log(">>> multer middleware 들어옴 >>> type : ", typeof type)
         
                 let lastProductId = await Product.findOne({
-                    order: [['createdAt', 'DESC']],
+                    order: [['productId', 'DESC']],
                     attributes: ['productId'],
                 });
                 console.log('🚀 ~ type:', type);

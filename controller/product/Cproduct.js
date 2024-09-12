@@ -330,7 +330,7 @@ exports.postProduct = async (req, res) => {
 
         // productId를 받기 위한 조회
         let lastProductId = await Product.findOne({
-            order: [['createdAt', 'DESC']],
+            order: [['productId', 'DESC']],
             attributes: ['productId'],
         });
         var newProductId = 1;
