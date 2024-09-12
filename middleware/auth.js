@@ -1,7 +1,7 @@
 const express = require("express");
 const jwt = require("jsonwebtoken");
 // const session = require("express-session");
-const { Active } = require("../models/Index")
+const { Active } = require("../models/Index");
 
 // // 세션 생성
 // exports.createSession = async(req, userId, isActive, isAdmin) => {
@@ -26,31 +26,28 @@ const { Active } = require("../models/Index")
 //   };
 // };
 
-
-
 // 토큰 생성
-exports.createToken = ( userId, isActive, isAdmin) => {
-  return jwt.sign(
-    { userId, isActive, isAdmin },
-    process.env.JWT_SECRET,
-    { expiresIn: '1d' }
-  );
+exports.createToken = (userId, isActive, isAdmin) => {
+  return jwt.sign({ userId, isActive, isAdmin }, process.env.JWT_SECRET, {
+    expiresIn: "1d",
+  });
 };
-
 
 // 토큰에서 userId 확인 (디버깅용)
 exports.getUserInfoByToken = (req, res) => {
   return new Promise((resolve, reject) => {
-    console.log('11111');
+    console.log("11111");
 
-    const { token } = req.body;  // body에서 토큰 추출
+    const { token } = req.body; // body에서 토큰 추출
     console.log("🚀 ~ token:", token);
 
     if (!token) {
       return reject(new Error("토큰이 제공되지 않았습니다."));
     }
 
-    const actualToken = token.startsWith("Bearer ") ? token.split(" ")[1] : token;
+    const actualToken = token.startsWith("Bearer ")
+      ? token.split(" ")[1]
+      : token;
     console.log("🚀 ~ actualToken:", actualToken);
 
     try {
@@ -67,15 +64,12 @@ exports.getUserInfoByToken = (req, res) => {
       req.isAdmin = isAdmin;
 
       resolve({ userId, isAdmin });
-
     } catch (err) {
       console.log(err.message);
       return reject(new Error("유효하지 않은 토큰입니다."));
     }
   });
-}
-
-
+};
 
 // 유저 본인 또는 관리자인지 확인
 const admin = "admin";
@@ -83,13 +77,13 @@ const adminOrUser = "adminOrUser";
 
 exports.authenticate = (accessType) => {
   return (req, res, next) => {
-    console.log('req.body >>>', req.body);
-    console.log('req.headers >>>', req.headers);
-    
+    console.log("req.body >>>", req.body);
+    console.log("req.headers >>>", req.headers);
+
     try {
       // Authorization 헤더에서 토큰 추출
       const authHeader = req.headers.authorization;
-      
+
       if (!authHeader || !authHeader.startsWith("Bearer ")) {
         return res.status(401).json({ message: "토큰이 제공되지 않았습니다." });
       }
@@ -106,11 +100,11 @@ exports.authenticate = (accessType) => {
       /**
        * 관리자: 모든 경우 접근 허용
        * 사용자: 본인의 것만 접근 허용
-       * 
+       *
        * 본인 또는 관리자 접근 가능한 경우:
        * - decoded한 토큰의 userId와 요청한 파라미터(req.params.userId)를 비교하여 본인의 데이터에 접근하려는지 확인.
        * - 만약 파라미터가 없는 경우 (ex. postRoom), 토큰에서 가져온 userId와 body값을 비교하여 접근을 허용.
-       * 
+       *
        * 관리자만 접근 가능한 경우:
        * - decoded된 토큰에서 관리자 권한이 있는지 확인 후, 관리자는 모든 접근을 허용.
        * - 파라미터가 있는 경우, 해당 파라미터에 따라 코드를 실행하되 권한은 관리자임.
@@ -118,7 +112,12 @@ exports.authenticate = (accessType) => {
        */
 
       // 본인 또는 관리자 접근 허용
-      if (accessType === adminOrUser && req.params.userId && userId !== parseInt(req.params.userId, 10) && !isAdmin) {
+      if (
+        accessType === adminOrUser &&
+        req.params.userId &&
+        userId !== parseInt(req.params.userId, 10) &&
+        !isAdmin
+      ) {
         return res.status(403).json({ message: "접근 권한이 없습니다." });
       }
 
