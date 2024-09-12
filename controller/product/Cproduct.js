@@ -119,6 +119,11 @@ exports.getProductList = async (req, res) => {
                     model: Location,
                     attributes: ['depth1', 'depth2', 'depth3'],
                 },
+                {
+                    model: ProductImage,
+                    attributes: ['productImage'],
+                    limit: 1,
+                },
             ],
             group: ['Product.productId'], // productId로 그룹화
             order: [['productId', 'DESC']],
@@ -150,7 +155,7 @@ exports.getProductList = async (req, res) => {
                 productImage: `${profileImgUrl}/${image.productImage}`,
             }));
         });
-        // console.log('updatedProducts > ', updatedProducts);
+        console.log('updatedProducts > ', updatedProducts);
 
         const productInfo = likesCNT.map((item) => {
             let time = item.updatedAt;
@@ -167,11 +172,18 @@ exports.getProductList = async (req, res) => {
         // 이미지 불러오기
         // const getImages = await uploadImgProduct.getProductImg(req, productId, 'product');
         const totalPages = Math.ceil(productCNT.count / limit);
+        const locations = likesCNT.map(product => ({
+            depth1: product['Location.depth1'],
+            depth2: product['Location.depth2'],
+            depth3: product['Location.depth3']
+        }));
 
         res.send({
             totalCount: productCNT.count,
-            productInfo: productInfo,
+            productInfo : productInfo,
+            createdAt: productInfo,
             images: updatedProducts,
+            location: locations,
             totalPages: totalPages,
             currentPage: page,
         });
@@ -272,13 +284,12 @@ exports.getProduct = async (req, res) => {
             viewCount: product.viewCount,
             status: product.status,
             isLike: checklikes,
-            location: product.Location.dataValues,
             totalLikes: likeCnt,
             totalReport: reportCnt,
             createdAt: time,
             images: getImages,
             newItem,
-        });
+            location: product.Location});
     } catch (err) {
         res.status(500).json({ message: 'getProduct 서버 오류', err: err.message });
     }
