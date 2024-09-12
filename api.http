@@ -77,7 +77,7 @@ Content-Type: application/json ; charset=UTF-8
 GET {{server}}/product/update?productId={{productId}}
 
 ### 특정 상품 수정
-PATCH {{server}}/product/update?productId={{productId}}
+POST {{server}}/product/update?productId={{productId}}
 Content-Type: application/json ; charset=UTF-8
 
 {

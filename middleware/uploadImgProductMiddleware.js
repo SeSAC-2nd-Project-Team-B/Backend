@@ -76,7 +76,7 @@ exports.getProductImg = async (req, productId, type) => {
 
 exports.deleteProductImg = async function (req, productId, type) {
     const image = await ProductImage.findAll({ where: { productId } });
-    console.log("deleteProductImg >> ", image.length);
+    console.log("deleteProductImg 개수 >> ", image.length);
 
     try {
         // if (image.length == 0) {

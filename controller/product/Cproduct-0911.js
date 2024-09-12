@@ -14,14 +14,13 @@ const {
 } = require('../../models/Index');
 const { paginate, paginateResponse } = require('../../utils/paginate');
 const { getNproductPrice } = require('../../utils/apiHandler');
-const { getLikes, postLikes, checkLikes } = require('../../service/likesService');
+const { getLikes, postLikes } = require('../../service/likesService');
 const { getReport, postReportProduct } = require('../../service/reportService');
 const { isLoginUser, isWriter } = require('../../service/isLoginActive');
 const { saveCategory } = require('../../utils/saveCategory');
 const uploadImgProduct = require('../../middleware/uploadImgProductMiddleware');
 const axios = require('axios');
 const dotenv = require('dotenv');
-const jwt = require('jsonwebtoken');
 dotenv.config();
 
 let searchWord = '';
@@ -185,8 +184,9 @@ exports.getProductList = async (req, res) => {
 // GET /product/read?productId=
 exports.getProduct = async (req, res) => {
     try {
+        const userId = req.userId; //로그인한 유저
         const { productId } = req.query;
-        console.log(`req.query > `, req.query);
+        console.log(`userId > ${userId}  /  req.query > `, req.query);
 
         console.log('1개 상품 보기', productId);
 
@@ -215,25 +215,23 @@ exports.getProduct = async (req, res) => {
                     attributes: ['depth1', 'depth2', 'depth3'],
                 },
             ],
-            where: { productId },
+            where: { productId }
         });
 
-        var checklikes = 0;
-        let userId=0;
-        if (req.headers.authorization) {
-            const authHeader = req.headers.authorization;
-            console.log('authHeader > ', authHeader);
-            console.log('req >> ', req.headers);
-
-            const token = authHeader.split(' ')[1];
-            const decoded = jwt.verify(token, process.env.JWT_SECRET);
-            userId = decoded.userId;
-            console.log('userId >> ', userId);
-            checklikes = await checkLikes(productId, userId);
+        if (userId) {
+            const likes = await Likes.findOne({
+                where: {
+                    productId,
+                    userId,
+                },
+            });
         }
-        console.log('checklikes > ', checklikes);
-
+        else{
+            likes=0;
+        }
         console.log('product.location.depth1 > ', product.Location.dataValues);
+
+        console.log(' do i push this product likes? > ', likes);
         // 찜 개수 불러오기
         const likeCnt = await getLikes(productId);
         console.log('likesCnt >> ', likeCnt);
@@ -254,9 +252,7 @@ exports.getProduct = async (req, res) => {
         time = `${year}-${month}-${day}`;
 
         console.log('reportCnt >> ', reportCnt);
-        console.log(`(userId? userId : 0)`, userId? userId : 0)
         res.send({
-            userId: userId? userId : 0,
             productId: product.productId,
             productName: product.productName,
             price: product.price,
@@ -264,7 +260,7 @@ exports.getProduct = async (req, res) => {
             categoryId: product.categoryId,
             viewCount: product.viewCount,
             status: product.status,
-            isLike: checklikes,
+            isLike: likes.likesCount,
             location: product.Location.dataValues,
             totalLikes: likeCnt,
             totalReport: reportCnt,
@@ -389,8 +385,8 @@ exports.postProductUpdate = async (req, res) => {
         console.log('상품 수정 버튼 클릭됨.');
         console.log('req.body > ', req.body);
         const { productId } = req.query;
-        const { productName, price, content, categoryId, status } = req.body;
-
+        const { productName, price, content } = req.body;
+        console.log(">>> ", req.query);
         const result = await isLoginUser(req, res);
 
         if (!result) return;
@@ -406,13 +402,14 @@ exports.postProductUpdate = async (req, res) => {
                     productName,
                     price,
                     content,
-                    categoryId,
-                    status,
+                    categoryId:3,
                 },
                 {
                     where: { productId },
                 }
             );
+            console.log("secHandProduct > ",secHandProduct);
+            
             var imgFileArr = req.files;
             // 상품 이미지 s3에 삭제
             const findImg = await uploadImgProduct.deleteProductImg(req, productId, 'product');
@@ -450,7 +447,7 @@ exports.postProductUpdate = async (req, res) => {
 
         // 상품 db 저장
     } catch (err) {
-        res.status(500).json({ message: 'getProductUpdate 서버 오류', err: err.message });
+        res.status(500).json({ message: 'postProductUpdate 서버 오류', err: err.message });
     }
 };
 
