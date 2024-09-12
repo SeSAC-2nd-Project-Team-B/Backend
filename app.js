@@ -34,11 +34,11 @@ app.use(
     credentials: true,
   })
 );
+// app.use(cors({ origin: 'http://localhost:3000', credentials: true }));
 
 // Preflight OPTIONS 요청 허용
 app.options("*", cors());
 
-// app.use(cors({ origin: 'http://localhost:8000', credentials: true }));
 app.use("/uploads", express.static(__dirname + "/uploads"));
 app.use("/public", express.static(path.join(__dirname + "/public")));
 
