@@ -215,9 +215,7 @@ exports.getProduct = async (req, res) => {
                     attributes: ['depth1', 'depth2', 'depth3'],
                 },
             ],
-            where: { productId }
         });
-
         if (userId) {
             const likes = await Likes.findOne({
                 where: {
@@ -380,13 +378,13 @@ exports.getProductUpdate = async (req, res) => {
 
 // 상품 수정 버튼 클릭시
 // POST /product/update?productId=
-exports.postProductUpdate = async (req, res) => {
+exports.patchProductUpdate = async (req, res) => {
     try {
         console.log('상품 수정 버튼 클릭됨.');
         console.log('req.body > ', req.body);
         const { productId } = req.query;
-        const { productName, price, content } = req.body;
-        console.log(">>> ", req.query);
+        const { productName, price, content, categoryId, status } = req.body;
+
         const result = await isLoginUser(req, res);
 
         if (!result) return;
@@ -402,21 +400,20 @@ exports.postProductUpdate = async (req, res) => {
                     productName,
                     price,
                     content,
-                    categoryId:3,
+                    categoryId,
+                    status,
                 },
                 {
                     where: { productId },
                 }
             );
-            console.log("secHandProduct > ",secHandProduct);
-            
             var imgFileArr = req.files;
             // 상품 이미지 s3에 삭제
             const findImg = await uploadImgProduct.deleteProductImg(req, productId, 'product');
             console.log('findImg > ', findImg);
             // 상품 이미지 s3 추가
-            // const addImg = await uploadImgProduct.postUpProductImage();
-            // console.log('addImg > ', addImg);
+            const addImg = await uploadImgProduct.postUpProductImage();
+            console.log('addImg > ', addImg);
 
             const extractFilenames = [];
             for (const product in imgFileArr) {
@@ -447,7 +444,7 @@ exports.postProductUpdate = async (req, res) => {
 
         // 상품 db 저장
     } catch (err) {
-        res.status(500).json({ message: 'postProductUpdate 서버 오류', err: err.message });
+        res.status(500).json({ message: 'getProductUpdate 서버 오류', err: err.message });
     }
 };
 

@@ -93,6 +93,32 @@ exports.postLikes = async (req, res) => {
     }
 };
 
+exports.checkLikes = async (req, res) => {
+    try {
+        const { productId, userId } = req;
+        console.log('checkLikes req > ', productId,userId);
+        const likes = await Likes.findOne({
+            where: {
+                productId,
+                userId
+            },
+            
+            raw: true,
+        });
+        console.log('do i likes ?> ',likes)
+        if(likes){
+            return true;
+        }
+        else{
+            return false;
+        }
+        
+        
+    } catch (err) {
+        return `message: 'getLikes 서버 오류', err: ${err.message} `;
+    }
+};
+
 function likesCreate(productId, userId, likesCount) {
     Likes.create(
         { productId, userId, likesCount },
