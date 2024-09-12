@@ -322,10 +322,14 @@ exports.postProduct = async (req, res) => {
             order: [['createdAt', 'DESC']],
             attributes: ['productId'],
         });
-        const newProductId = lastProductId ? lastProductId.productId + 1 : 1;
+        var newProductId = 1;
+        if (lastProductId) {
+            newProductId = lastProductId ? lastProductId.productId + 1 : 1;
+        }
         console.log('newProductId >>>>>> ', newProductId);
 
         const newSecHandProduct = await Product.create({
+            productId: newProductId,
             productName,
             userId,
             price,
@@ -439,7 +443,7 @@ exports.postProductUpdate = async (req, res) => {
 
             // 추출된 filename들
             console.log('extractFilenames > ', extractFilenames);
-            
+
             const existingRecord = await ProductImage.destroy({
                 where: { productId },
             });
