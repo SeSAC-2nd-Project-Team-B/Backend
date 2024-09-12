@@ -219,7 +219,7 @@ exports.getProduct = async (req, res) => {
         });
 
         var checklikes = 0;
-        let userId=0;
+        let userId = 0;
         if (req.headers.authorization) {
             const authHeader = req.headers.authorization;
             console.log('authHeader > ', authHeader);
@@ -254,9 +254,16 @@ exports.getProduct = async (req, res) => {
         time = `${year}-${month}-${day}`;
 
         console.log('reportCnt >> ', reportCnt);
-        console.log(`(userId? userId : 0)`, userId? userId : 0)
+        console.log(`(userId? userId : 0)`, userId ? userId : 0);
+
+        // 새상품 가격 받아오기
+        const query = product.productName.split(' ')[0];
+        console.log(query);
+        const newItem = await getNproductPrice(query, 'product', req, res);
+        console.log('newItem >', newItem);
+
         res.send({
-            userId: userId? userId : 0,
+            userId: userId ? userId : 0,
             productId: product.productId,
             productName: product.productName,
             price: product.price,
@@ -270,6 +277,7 @@ exports.getProduct = async (req, res) => {
             totalReport: reportCnt,
             createdAt: time,
             images: getImages,
+            newItem,
         });
     } catch (err) {
         res.status(500).json({ message: 'getProduct 서버 오류', err: err.message });

@@ -38,7 +38,6 @@ select * from active;
 select * from likes;
 update active set isActive=0 where userId=4;
 select * from report;
-drop table productImage;
 select * from productImage order by imageId desc;
 desc productImage;
 select * from product order by productId desc;
