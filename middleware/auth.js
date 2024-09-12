@@ -83,8 +83,7 @@ const adminOrUser = "adminOrUser";
 
 exports.authenticate = (accessType) => {
   return (req, res, next) => {
-    console.log(req);
-    
+    console.log("req >> ",req);
     try {
       // Authorization 헤더에서 토큰 추출
       const authHeader = req.headers.authorization;
