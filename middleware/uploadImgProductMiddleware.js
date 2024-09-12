@@ -3,7 +3,7 @@ const multerS3 = require('multer-s3');
 const { s3 } = require('../config/s3config');
 const { Product, ProductImage } = require('../models/Index')
 
-exports.postUpProductImage = multer({
+exports.postUpProductImage = (type) => multer({
     fileFilter: (req, file, cb) => {
         const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg'];
         if (allowedTypes.includes(file.mimetype)) {
@@ -21,24 +21,30 @@ exports.postUpProductImage = multer({
 
         key: async (req, file, cb) => {
             try {
-                console.log(">>> multer middleware 들어옴 >>> ")
+                console.log(">>> multer middleware 들어옴 >>> type : ", typeof type)
+
                 let lastProductId = await Product.findOne({
                     order: [['createdAt', 'DESC']],
                     attributes: ['productId'],
                 });
-                console.log("lastProductId >", lastProductId.productId);
-
-                const newProductId = lastProductId.productId ? lastProductId.productId + 1 : 'error';
-                const type = 'product';
                 console.log('🚀 ~ type:', type);
-                console.log('🚀 ~ productId:', newProductId);
-
-                if (type === 'product') {
-                    cb(null, `${type}/${newProductId}/${file.originalname}`);
-                    // cb(null, `${type}/${newProductId}/${Date.now()}_${file.originalname}`);
-                } else {
+                console.log("lastProductId >", lastProductId.productId);
+                
+                var pId = lastProductId.productId;
+                if(type === 'update'){
+                    pId = lastProductId.productId;
+                }
+                else if (type === 'create') {
+                    pId = lastProductId.productId ? lastProductId.productId + 1 : 'error';
+                } 
+                else {
                     cb(new Error('유효하지 않은 type 입니다.'));
                 }
+                console.log('🚀 ~ productId:', pId);
+                const filename = `product/${pId}/${file.originalname}`
+                console.log("filename >> ", filename);
+                
+                cb(null, filename);
             } catch (error) { console.log("postUpProductImage error : ", error) }
         },
     }),

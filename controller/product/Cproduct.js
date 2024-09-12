@@ -150,7 +150,7 @@ exports.getProductList = async (req, res) => {
                 productImage: `${profileImgUrl}/${image.productImage}`,
             }));
         });
-        console.log('updatedProducts > ', updatedProducts);
+        // console.log('updatedProducts > ', updatedProducts);
 
         const productInfo = likesCNT.map((item) => {
             let time = item.updatedAt;
@@ -222,8 +222,7 @@ exports.getProduct = async (req, res) => {
         let userId = 0;
         if (req.headers.authorization) {
             const authHeader = req.headers.authorization;
-            console.log('authHeader > ', authHeader);
-            console.log('req >> ', req.headers);
+            // console.log('authHeader > ', authHeader);
 
             const token = authHeader.split(' ')[1];
             const decoded = jwt.verify(token, process.env.JWT_SECRET);
@@ -260,7 +259,7 @@ exports.getProduct = async (req, res) => {
         const query = product.productName.split(' ')[0];
         console.log(query);
         const newItem = await getNproductPrice(query, 'product', req, res);
-        console.log('newItem >', newItem);
+        // console.log('newItem >', newItem);
 
         res.send({
             userId: userId ? userId : 0,
@@ -440,12 +439,13 @@ exports.postProductUpdate = async (req, res) => {
 
             // 추출된 filename들
             console.log('extractFilenames > ', extractFilenames);
+            
+            const existingRecord = await ProductImage.destroy({
+                where: { productId },
+            });
 
             for (i = 0; i < extractFilenames.length; i++) {
                 console.log('i >> ', i);
-                const existingRecord = await ProductImage.destroy({
-                    where: { productId },
-                });
                 console.log('existingRecord > ', existingRecord);
 
                 const newImage = await ProductImage.create({
