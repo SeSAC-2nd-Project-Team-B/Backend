@@ -2,10 +2,10 @@ const { Product, Likes } = require('../models/Index');
 const { isLoginUser, isWriter } = require('../service/isLoginActive');
 var sequelize = require('sequelize');
 
-exports.getLikes = async (req, res) => {
+exports.getLikes = async (req) => {
     try {
         const productId = req;
-        console.log('req > ', productId);
+        console.log('productId > ', productId);
         const likes = await Likes.findOne({
             where: {
                 productId,
@@ -93,10 +93,12 @@ exports.postLikes = async (req, res) => {
     }
 };
 
-exports.checkLikes = async (req, res) => {
+exports.checkLikes = async (productId, userId) => {
     try {
-        const { productId, userId } = req;
-        console.log('checkLikes req > ', productId,userId);
+        // console.log("checkLikes req >> ", );
+        
+        // const { productId, userId } = req;
+        console.log('checkLikes parameter > ', productId,userId);
         const likes = await Likes.findOne({
             where: {
                 productId,
@@ -105,17 +107,11 @@ exports.checkLikes = async (req, res) => {
             
             raw: true,
         });
-        console.log('do i likes ?> ',likes)
-        if(likes){
-            return true;
-        }
-        else{
-            return false;
-        }
-        
-        
+        var islike = likes.likesCount ? likes.likesCount : 0;
+        console.log('do i likes ? ',islike)
+        return islike;
     } catch (err) {
-        return `message: 'getLikes 서버 오류', err: ${err.message} `;
+        return `message: 'checkLikes 서버 오류', err: ${err.message} `;
     }
 };
 
