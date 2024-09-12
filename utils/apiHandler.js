@@ -8,7 +8,7 @@ dotenv.config();
 
 exports.getNproductPrice = async (query, type, req, res) => {
     let searchWord = '';
-    // console.log("query > ", query);
+    console.log("query > ", query);
     
     if (type == 'query') {
         searchWord = query.query;
@@ -17,9 +17,9 @@ exports.getNproductPrice = async (query, type, req, res) => {
     }
     console.log('searchWord > ', searchWord);
 
-    const url = 'https://openapi.naver.com/v1/search/shop.json?query=' + encodeURIComponent(searchWord);
     const ClientID = process.env.NAVER_CLIENT_ID;
     const ClientSecret = process.env.NAVER_CLIENT_SECRET;
+    const url = 'https://openapi.naver.com/v1/search/shop.json?query=' + encodeURIComponent(searchWord);
 
     try {
         const response = await axios.get(url, {
