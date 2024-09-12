@@ -4,7 +4,7 @@ const { s3 } = require('../config/s3config');
 const { Product, ProductImage } = require('../models/Index')
 
 exports.postUpProductImage = (type) => multer({
-    fileFilter: (req, file, cb) => {
+    fileFilter: (req, file, cb, next) => {
         const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg'];
         if (allowedTypes.includes(file.mimetype)) {
             cb(null, true);
@@ -27,17 +27,21 @@ exports.postUpProductImage = (type) => multer({
                     order: [['createdAt', 'DESC']],
                     attributes: ['productId'],
                 });
-                
-                let pId;
-                if (type === 'update') {
-                    if (!lastProductId) {
-                        cb(new Error('업데이트할 상품이 존재하지 않습니다.'));
-                        return;
+                console.log('🚀 ~ type:', type);
+
+                console.log("lastProductId ? > ", lastProductId);
+                var pId = 1;
+                console.log("last Pid > ", pId);
+
+                if (type === 'create') {
+                    if(lastProductId){
+                        pId = lastProductId.productId ? lastProductId.productId + 1 : 'error';
                     }
-                    pId = lastProductId.productId;
-                } else if (type === 'create') {
-                    pId = lastProductId ? lastProductId.productId + 1 : 1;
-                } else {
+                } 
+                else if(type === 'update'){
+                    pId = req.query.productId ;
+                }
+                else {
                     cb(new Error('유효하지 않은 type 입니다.'));
                     return;
                 }
@@ -45,7 +49,6 @@ exports.postUpProductImage = (type) => multer({
                 console.log('🚀 ~ productId:', pId);
                 const filename = `product/${pId}/${file.originalname}`;
                 console.log("filename >> ", filename);
-                
                 cb(null, filename);
             } catch (error) {
                 console.log("postUpProductImage error : ", error);
@@ -102,7 +105,7 @@ exports.deleteProductImg = async function (req, productId, type) {
         // }
         const imageFiles = image.map(a => a.dataValues.productImage);
         console.log("deleteProductImg Files >>> ", imageFiles);
-        
+
         for (i = 0; i < imageFiles.length; i++) {
             const params = {
                 Bucket: process.env.S3_BUCKET_NAME,
