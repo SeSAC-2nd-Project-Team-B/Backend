@@ -22,31 +22,37 @@ exports.postUpProductImage = (type) => multer({
         key: async (req, file, cb) => {
             try {
                 console.log(">>> multer middleware 들어옴 >>> type : ", typeof type)
-
+        
                 let lastProductId = await Product.findOne({
                     order: [['createdAt', 'DESC']],
                     attributes: ['productId'],
                 });
-                console.log('🚀 ~ type:', type);
-                console.log("lastProductId >", lastProductId.productId);
                 
-                var pId = lastProductId.productId;
-                if(type === 'update'){
+                let pId;
+                if (type === 'update') {
+                    if (!lastProductId) {
+                        cb(new Error('업데이트할 상품이 존재하지 않습니다.'));
+                        return;
+                    }
                     pId = lastProductId.productId;
-                }
-                else if (type === 'create') {
-                    pId = lastProductId.productId ? lastProductId.productId + 1 : 'error';
-                } 
-                else {
+                } else if (type === 'create') {
+                    pId = lastProductId ? lastProductId.productId + 1 : 1;
+                } else {
                     cb(new Error('유효하지 않은 type 입니다.'));
+                    return;
                 }
+        
                 console.log('🚀 ~ productId:', pId);
-                const filename = `product/${pId}/${file.originalname}`
+                const filename = `product/${pId}/${file.originalname}`;
                 console.log("filename >> ", filename);
                 
                 cb(null, filename);
-            } catch (error) { console.log("postUpProductImage error : ", error) }
+            } catch (error) {
+                console.log("postUpProductImage error : ", error);
+                cb(error);
+            }
         },
+        
     }),
 
     limits: { fileSize: 100 * 1024 * 1024 }, //업로드 크기 제한
