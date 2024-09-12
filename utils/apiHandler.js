@@ -51,7 +51,7 @@ exports.getNproductPrice = async (query, type, req, res) => {
         });
 
         if (extractData.length === 0) {
-            return ('해당 키워드로 검색된 상품의 최저가 정보가 없습니다.😥');
+            return (extractData.length);
         }
         return (extractData);
     } catch (err) {

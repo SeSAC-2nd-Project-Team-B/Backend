@@ -264,6 +264,7 @@ exports.getProduct = async (req, res) => {
 
         res.send({
             userId: userId ? userId : 0,
+            sellerId: product.userId,
             productId: product.productId,
             productName: product.productName,
             price: product.price,
