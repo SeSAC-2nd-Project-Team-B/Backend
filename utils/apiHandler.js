@@ -8,7 +8,7 @@ dotenv.config();
 
 exports.getNproductPrice = async (query, type, req, res) => {
     let searchWord = '';
-    console.log("query > ", query);
+    // console.log("query > ", query);
     
     if (type == 'query') {
         searchWord = query.query;

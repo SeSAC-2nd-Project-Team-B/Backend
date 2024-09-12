@@ -83,11 +83,11 @@ const adminOrUser = "adminOrUser";
 
 exports.authenticate = (accessType) => {
   return (req, res, next) => {
+    console.log(req);
+    
     try {
       // Authorization 헤더에서 토큰 추출
       const authHeader = req.headers.authorization;
-      // console.log("authoooooooo > ", authHeader);
-      
       
       if (!authHeader || !authHeader.startsWith("Bearer ")) {
         return res.status(401).json({ message: "토큰이 제공되지 않았습니다." });
