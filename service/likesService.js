@@ -104,10 +104,11 @@ exports.checkLikes = async (productId, userId) => {
                 productId,
                 userId
             },
-            
             raw: true,
         });
-        var islike = likes.likesCount ? likes.likesCount : 0;
+        console.log("------ likes > ", likes);
+        
+        var islike = likes ? likes.likesCount : 0;
         console.log('do i likes ? ',islike)
         return islike;
     } catch (err) {
